@@ -7,5 +7,5 @@ app.use(express.static("public"));
 app.use("/api", endpoints);
 
 app.listen(port, () => {
-  console.log(`Express server running at port ${port}`);
+  console.log(`Server running at port ${port}`);
 });
