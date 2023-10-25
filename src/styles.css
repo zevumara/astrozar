@@ -20,11 +20,9 @@ body {
 }
 
 .swiper-slide {
-  font-size: 18px;
-  color: #fff;
-  -webkit-box-sizing: border-box;
+  font-size: 28px;
+  color: #000;
   box-sizing: border-box;
-  padding: 40px 60px;
 }
 
 .parallax-bg {
@@ -32,8 +30,7 @@ body {
   left: 0;
   top: 0;
   width: 130%;
-  height: 100%;
-  -webkit-background-size: cover;
+  height: 130%;
   background-size: cover;
   background-position: center;
 }
