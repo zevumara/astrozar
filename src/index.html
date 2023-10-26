@@ -16,9 +16,11 @@
       ></div>
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div class="column">Triangle</div>
-          <div class="column">Square</div>
-          <div class="column">Circle</div>
+          <div class="container">
+            <div class="slot triangle">slot</div>
+            <div class="slot circle">slot</div>
+            <div class="slot square">slot</div>
+          </div>
         </div>
         <div class="swiper-slide">
           <div class="title">Welcome</div>
@@ -45,6 +47,33 @@
         </div>
       </div>
     </div>
+    <div class="deck-wrapper hide">
+      <div class="row">
+        <button id="btnBack">Go back</button>
+      </div>
+      <div class="row big">
+        <div class="swiper-deck mySwiperDeck">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">Card 0</div>
+            <div class="swiper-slide">Card 1</div>
+            <div class="swiper-slide">Card 2</div>
+            <div class="swiper-slide">Card 3</div>
+            <div class="swiper-slide">Card 4</div>
+            <div class="swiper-slide">Card 5</div>
+            <div class="swiper-slide">Card 6</div>
+            <div class="swiper-slide">Card 7</div>
+            <div class="swiper-slide">Card 8</div>
+            <div class="swiper-slide">Card 9</div>
+          </div>
+        </div>
+      </div>
+      <div class="row medium">
+        <button id="btnChoose">
+          <span>HOLD</span>
+        </button>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="app.min.js"></script>
   </body>
