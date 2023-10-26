@@ -1,4 +1,10 @@
-function generateDeck() {
+/*** Functions */
+
+function $(selector) {
+  return document.querySelector(selector);
+}
+
+function generate_deck() {
   const deck = [];
   for (let i = 0; i < 10; i++) {
     let cardIndex;
@@ -10,9 +16,49 @@ function generateDeck() {
   return deck;
 }
 
-let deckTriangle = generateDeck();
-let deckSquare = generateDeck();
-let deckCircle = generateDeck();
+function show_deck(deck) {
+  if (user[deck]) return;
+  user.target = deck;
+  $("#btnChoose").disabled = false;
+  $(".deck-wrapper").classList.remove("hide");
+  deckSwiper.update();
+  deckSwiper.update();
+  deckSwiper.enable();
+}
+
+function chosen() {
+  if (!user.target) return;
+  user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
+  $("#btnChoose").disabled = true;
+  $(".deck-wrapper").classList.add("hide");
+  $(`.slot.${[user.target]}`).classList.add("done");
+  if (
+    typeof user.triangle === "number" &&
+    typeof user.square === "number" &&
+    typeof user.circle === "number"
+  ) {
+    alea_iacta_est();
+  }
+}
+
+function alea_iacta_est() {
+  console.log(`Alea iacta est: ${user.triangle} ${user.square} ${user.circle}`);
+}
+
+/*** Vars */
+
+const user = {
+  decks: {
+    triangle: generate_deck(),
+    square: generate_deck(),
+    circle: generate_deck(),
+  },
+  target: null,
+  timer: null,
+  triangle: null,
+  square: null,
+  circle: null,
+};
 
 const swiper = new Swiper(".mySwiper", {
   speed: 600,
@@ -22,7 +68,7 @@ const swiper = new Swiper(".mySwiper", {
   direction: "vertical",
 });
 
-const deck = new Swiper(".mySwiperDeck", {
+const deckSwiper = new Swiper(".mySwiperDeck", {
   effect: "cards",
   grabCursor: true,
   mousewheel: true,
@@ -30,6 +76,8 @@ const deck = new Swiper(".mySwiperDeck", {
   keyboard: true,
   initialSlide: 5,
 });
+
+/*** Buttons */
 
 $("#askButton").onclick = () => {
   swiper.slideNext(600);
@@ -41,50 +89,40 @@ $("#testButton").onclick = () => {
 };
 
 $(".slot.triangle").onclick = () => {
-  $(".deck-wrapper").classList.remove("hide");
-  deck.update();
-  deck.update();
-  deck.enable();
+  show_deck("triangle");
 };
 
-$(".slot.circle").onclick = () => {};
+$(".slot.circle").onclick = () => {
+  show_deck("circle");
+};
 
-$(".slot.square").onclick = () => {};
-
-// $(".deck-wrapper").onclick = () => {
-//   console.log(deck.activeIndex);
-// };
-
-let holdTimer;
+$(".slot.square").onclick = () => {
+  show_deck("square");
+};
 
 $("#btnChoose").onmousedown = (e) => {
-  holdTimer = setTimeout(() => {
-    console.log(`Carta ${deck.activeIndex} elegida.`);
-    $("#btnChoose").disabled = true;
+  user.timer = setTimeout(() => {
+    chosen();
   }, 1000);
 };
 
 $("#btnChoose").onmouseup = (e) => {
-  clearTimeout(holdTimer);
+  clearTimeout(user.timer);
 };
 
 $("#btnChoose").ontouchstart = () => {
   console.log("ontouchstart");
-  holdTimer = setTimeout(() => {
-    console.log(`Choosed card is ${deck.activeIndex} (${deckTriangle[deck.activeIndex]}).`);
+  user.timer = setTimeout(() => {
+    chosen();
   }, 1000);
 };
 
 $("#btnChoose").ontouchend = () => {
   console.log("ontouchend");
-  clearTimeout(holdTimer);
+  clearTimeout(user.timer);
 };
 
 $("#btnBack").onclick = () => {
   $(".deck-wrapper").classList.add("hide");
-  deck.disable();
+  deckSwiper.disable();
 };
-
-function $(selector) {
-  return document.querySelector(selector);
-}

@@ -86,6 +86,12 @@ body {
 
 .slot:hover {
   cursor: pointer;
+  border-color: red;
+  opacity: 1;
+}
+
+.slot.done {
+  cursor: default;
   border-color: white;
   opacity: 1;
   background-color: white;
