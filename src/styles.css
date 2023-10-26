@@ -209,3 +209,18 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/*** Media queries */
+
+@media (min-width: 821px) {
+  .container {
+    flex-direction: row;
+  }
+  .slot {
+    aspect-ratio: 9 / 16;
+    width: 80vw;
+    height: auto;
+    max-width: 240px;
+    max-height: 360px;
+  }
+}
