@@ -24,6 +24,7 @@ function show_deck(deck) {
   deckSwiper.update();
   deckSwiper.update();
   deckSwiper.enable();
+  deckSwiper.slideTo(5, 0);
 }
 
 function chosen() {
@@ -32,6 +33,7 @@ function chosen() {
   $("#btnChoose").disabled = true;
   $(".deck-wrapper").classList.add("hide");
   $(`.slot.${[user.target]}`).classList.add("done");
+  $(`.slot.${[user.target]}`).innerText = user[user.target];
   if (
     typeof user.triangle === "number" &&
     typeof user.square === "number" &&
@@ -100,6 +102,11 @@ $(".slot.square").onclick = () => {
   show_deck("square");
 };
 
+$("#btnBack").onclick = () => {
+  $(".deck-wrapper").classList.add("hide");
+  deckSwiper.disable();
+};
+
 $("#btnChoose").onmousedown = (e) => {
   user.timer = setTimeout(() => {
     chosen();
@@ -111,18 +118,11 @@ $("#btnChoose").onmouseup = (e) => {
 };
 
 $("#btnChoose").ontouchstart = () => {
-  console.log("ontouchstart");
   user.timer = setTimeout(() => {
     chosen();
   }, 1000);
 };
 
 $("#btnChoose").ontouchend = () => {
-  console.log("ontouchend");
   clearTimeout(user.timer);
-};
-
-$("#btnBack").onclick = () => {
-  $(".deck-wrapper").classList.add("hide");
-  deckSwiper.disable();
 };

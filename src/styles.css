@@ -92,9 +92,9 @@ body {
 
 .slot.done {
   cursor: default;
-  border-color: white;
+  border-color: red;
   opacity: 1;
-  background-color: white;
+  background-color: red;
 }
 
 .deck-wrapper {
