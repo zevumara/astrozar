@@ -21,10 +21,10 @@ function show_deck(deck) {
   user.target = deck;
   $("#btnChoose").disabled = false;
   $(".deck-wrapper").classList.remove("hide");
+  deckSwiper.slideTo(5, 0);
   deckSwiper.update();
   deckSwiper.update();
   deckSwiper.enable();
-  deckSwiper.slideTo(5, 0);
 }
 
 function chosen() {
@@ -44,7 +44,7 @@ function chosen() {
 }
 
 function alea_iacta_est() {
-  console.log(`Alea iacta est: ${user.triangle} ${user.square} ${user.circle}`);
+  console.log(`Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
 }
 
 /*** Vars */
@@ -79,7 +79,7 @@ const deckSwiper = new Swiper(".mySwiperDeck", {
   initialSlide: 5,
 });
 
-/*** Buttons */
+/*** Events */
 
 $("#askButton").onclick = () => {
   swiper.slideNext(600);
