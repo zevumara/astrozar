@@ -43,18 +43,37 @@ function chosen() {
   }
 }
 
+function next() {
+  swiper.allowSlideNext = true;
+  swiper.slideNext(600);
+  swiper.allowSlideNext = false;
+}
+
+function answer() {
+  if (!user.query) return;
+  $(".query").innerText = user.query;
+  $(".answer").innerText =
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam omnis autem, eligendi, minus asperiores repudiandae et consequatur ab accusantium vero quod similique velit modi magni dolorum obcaecati incidunt sunt ipsa!";
+  swiper.allowSlideNext = true;
+  swiper.slideNext(600);
+  swiper.allowSlideNext = false;
+}
+
 function alea_iacta_est() {
   console.log(`Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
+  next();
+  setTimeout(answer, 6000);
 }
 
 /*** Vars */
 
 const user = {
   decks: {
-    triangle: generate_deck(),
-    square: generate_deck(),
-    circle: generate_deck(),
+    triangle: null,
+    square: null,
+    circle: null,
   },
+  query: null,
   target: null,
   timer: null,
   triangle: null,
@@ -65,9 +84,11 @@ const user = {
 const swiper = new Swiper(".mySwiper", {
   speed: 600,
   parallax: true,
-  allowTouchMove: false,
+  allowSlideNext: false,
+  allowSlidePrev: false,
   autoHeight: true,
   direction: "vertical",
+  animating: false,
 });
 
 const deckSwiper = new Swiper(".mySwiperDeck", {
@@ -81,13 +102,33 @@ const deckSwiper = new Swiper(".mySwiperDeck", {
 
 /*** Events */
 
-$("#askButton").onclick = () => {
-  swiper.slideNext(600);
+$("#btnAsk").onclick = (e) => {
+  e.preventDefault();
+  next();
 };
 
-$("#testButton").onclick = () => {
-  swiper.changeDirection("horizontal");
-  swiper.slideNext(600);
+$("textarea").oninput = (e) => {
+  const characters = e.target.value.length;
+  if (characters > 20 && characters < 255) {
+    user.query = e.target.value;
+    if ($("#btnDraw").classList.contains("disabled")) {
+      $("#btnDraw").classList.remove("disabled");
+    }
+  } else {
+    user.query = null;
+    if (!$("#btnDraw").classList.contains("disabled")) {
+      $("#btnDraw").classList.add("disabled");
+    }
+  }
+};
+
+$("#btnDraw").onclick = (e) => {
+  e.preventDefault();
+  setTimeout(next, 4000); // Avoid after first time (localStorage)
+  next();
+  user.decks.circle = generate_deck();
+  user.decks.square = generate_deck();
+  user.decks.triangle = generate_deck();
 };
 
 $(".slot.triangle").onclick = () => {
@@ -107,13 +148,13 @@ $("#btnBack").onclick = () => {
   deckSwiper.disable();
 };
 
-$("#btnChoose").onmousedown = (e) => {
+$("#btnChoose").onmousedown = () => {
   user.timer = setTimeout(() => {
     chosen();
   }, 1000);
 };
 
-$("#btnChoose").onmouseup = (e) => {
+$("#btnChoose").onmouseup = () => {
   clearTimeout(user.timer);
 };
 

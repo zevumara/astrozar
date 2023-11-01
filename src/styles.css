@@ -20,6 +20,10 @@ body {
   padding: 0;
 }
 
+ul {
+  list-style: none;
+}
+
 .swiper {
   width: 100%;
   height: 100%;
@@ -59,6 +63,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   flex-direction: column;
   gap: 5%;
 }
@@ -68,6 +73,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.container.inner {
+  padding: 0 10%;
 }
 
 .slot {
@@ -212,10 +221,57 @@ body {
   transition: all 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
+.button {
+  text-transform: uppercase;
+  text-decoration: none;
+  color: white;
+  display: block;
+  background-color: blue;
+  padding: 14px 24px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.5);
+}
+
+.button.disabled {
+  opacity: 0.5;
+  cursor: default;
+  background-color: gray;
+}
+
+textarea {
+  width: 80%;
+  height: 40%;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 40px;
+  overflow: hidden;
+}
+
+/*** Animations */
+
+@keyframes blinker {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.2;
+  }
+}
+.blink {
+  text-decoration: blink;
+  animation-name: blinker;
+  animation-duration: 0.8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+
 /*** Media queries */
 
 @media (min-width: 821px) {
-  .container {
+  #slots .container {
     flex-direction: row;
   }
   .slot {
