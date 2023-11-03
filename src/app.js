@@ -17,10 +17,10 @@ function generate_deck() {
 }
 
 function show_deck(deck) {
-  if (user[deck]) return;
+  if (user[deck] !== null) return;
   user.target = deck;
   $("#btnChoose").disabled = false;
-  $(".deck-wrapper").classList.remove("hide");
+  $("#deck").classList.add("appear");
   deckSwiper.slideTo(5, 0);
   deckSwiper.update();
   deckSwiper.update();
@@ -29,18 +29,41 @@ function show_deck(deck) {
 
 function chosen() {
   if (!user.target) return;
-  user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
   $("#btnChoose").disabled = true;
-  $(".deck-wrapper").classList.add("hide");
-  $(`.slot.${[user.target]}`).classList.add("done");
-  $(`.slot.${[user.target]}`).innerText = user[user.target];
-  if (
-    typeof user.triangle === "number" &&
-    typeof user.square === "number" &&
-    typeof user.circle === "number"
-  ) {
-    alea_iacta_est();
-  }
+  user.decks.circle = generate_deck();
+  user.decks.square = generate_deck();
+  user.decks.triangle = generate_deck();
+  user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
+  $("#deck").classList.remove("appear");
+  $("#chosen").classList.remove("hide");
+  // DON'T ASK MAN...
+  animate("#card-back", "wobble").then(() => {
+    animate("#card-back", "flipOutY").then(() => {
+      $("#card-back").classList.add("hide");
+      $("#card-front").classList.remove("hide");
+      animate("#card-front", "flipInY").then(() => {
+        animate("#card-front", "zoomOutUp").then(() => {
+          $("#card-front").classList.add("hide");
+          $(`.slot.${[user.target]}`).classList.remove("pulse");
+          $(`.slot.${[user.target]}`).classList.add("done");
+          $(`.slot.${[user.target]}`).classList.add("float");
+          cardEffect(`.slot.${[user.target]}`);
+          animate("#chosen", "fadeOut").then(() => {
+            $("#chosen").classList.add("hide");
+            $("#card-back").classList.remove("hide");
+            $("#btnChoose").disabled = false;
+            if (
+              typeof user.triangle === "number" &&
+              typeof user.square === "number" &&
+              typeof user.circle === "number"
+            ) {
+              alea_iacta_est();
+            }
+          });
+        });
+      });
+    });
+  });
 }
 
 function next() {
@@ -61,8 +84,22 @@ function answer() {
 
 function alea_iacta_est() {
   console.log(`Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
-  next();
-  setTimeout(answer, 6000);
+  //next();
+  //setTimeout(answer, 6000);
+}
+
+function animate(element, animation, prefix = "animate__") {
+  return new Promise((resolve, reject) => {
+    const animationName = `${prefix}${animation}`;
+    const node = $(element);
+    node.classList.add(`${prefix}animated`, animationName);
+    function handleAnimationEnd(event) {
+      event.stopPropagation();
+      node.classList.remove(`${prefix}animated`, animationName);
+      resolve("Animation ended");
+    }
+    node.addEventListener("animationend", handleAnimationEnd, { once: true });
+  });
 }
 
 /*** Vars */
@@ -113,18 +150,22 @@ $("textarea").oninput = (e) => {
     user.query = e.target.value;
     if ($("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.remove("disabled");
+      $("#btnDraw").classList.add("pulse");
     }
   } else {
     user.query = null;
     if (!$("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.add("disabled");
+      $("#btnDraw").classList.remove("pulse");
     }
   }
 };
 
 $("#btnDraw").onclick = (e) => {
   e.preventDefault();
-  setTimeout(next, 4000); // Avoid after first time (localStorage)
+  if (!user.query) return;
+  // Download files (sfx?)
+  setTimeout(next, 3000); // Avoid after first time (localStorage)
   next();
   user.decks.circle = generate_deck();
   user.decks.square = generate_deck();
@@ -144,7 +185,7 @@ $(".slot.square").onclick = () => {
 };
 
 $("#btnBack").onclick = () => {
-  $(".deck-wrapper").classList.add("hide");
+  $("#deck").classList.remove("appear");
   deckSwiper.disable();
 };
 
@@ -167,3 +208,55 @@ $("#btnChoose").ontouchstart = () => {
 $("#btnChoose").ontouchend = () => {
   clearTimeout(user.timer);
 };
+
+function rotateToMouse(e, el, bounds) {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const leftX = mouseX - bounds.x;
+  const topY = mouseY - bounds.y;
+  const center = {
+    x: leftX - bounds.width / 2,
+    y: topY - bounds.height / 2,
+  };
+
+  // const distance = Math.sqrt(center.x ** 2 + center.y ** 2);
+
+  //   el.style.transform = `
+  //   scale3d(1.07, 1.07, 1.07)
+  //   rotate3d(
+  //     ${center.y / 100},
+  //     ${-center.x / 100},
+  //     0,
+  //     ${Math.log(distance) * 2}deg
+  //   )
+  // `;
+
+  el.querySelector(".glow").style.backgroundImage = `
+    radial-gradient(
+      circle at
+      ${center.x * 2 + bounds.width / 2}px
+      ${center.y * 2 + bounds.height / 2}px,
+      #ffffff55,
+      #0000000f
+    )
+  `;
+}
+
+function cardEffect(el) {
+  const card = document.querySelector(el);
+  const bounds = card.getBoundingClientRect();
+
+  card.addEventListener("mouseenter", () => {
+    document.addEventListener("mousemove", (e) => {
+      rotateToMouse(e, card, bounds);
+    });
+  });
+
+  card.addEventListener("mouseleave", () => {
+    document.removeEventListener("mousemove", (e) => {
+      rotateToMouse(e, card, bounds);
+    });
+    card.style.transform = "";
+    card.style.background = "";
+  });
+}
