@@ -84,7 +84,12 @@ function answer() {
 
 function alea_iacta_est() {
   console.log(`Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
-  //next();
+  $("#background").classList.add("universe");
+  setTimeout(() => {
+    swiper.allowSlideNext = true;
+    swiper.slideNext(2000);
+    swiper.allowSlideNext = false;
+  }, 8000);
   //setTimeout(answer, 6000);
 }
 
@@ -99,6 +104,58 @@ function animate(element, animation, prefix = "animate__") {
       resolve("Animation ended");
     }
     node.addEventListener("animationend", handleAnimationEnd, { once: true });
+  });
+}
+
+function rotateToMouse(e, el, bounds) {
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const leftX = mouseX - bounds.x;
+  const topY = mouseY - bounds.y;
+  const center = {
+    x: leftX - bounds.width / 2,
+    y: topY - bounds.height / 2,
+  };
+
+  // const distance = Math.sqrt(center.x ** 2 + center.y ** 2);
+
+  //   el.style.transform = `
+  //   scale3d(1.07, 1.07, 1.07)
+  //   rotate3d(
+  //     ${center.y / 100},
+  //     ${-center.x / 100},
+  //     0,
+  //     ${Math.log(distance) * 2}deg
+  //   )
+  // `;
+
+  el.querySelector(".glow").style.backgroundImage = `
+    radial-gradient(
+      circle at
+      ${center.x * 2 + bounds.width / 2}px
+      ${center.y * 2 + bounds.height / 2}px,
+      #ffffff55,
+      #0000000f
+    )
+  `;
+}
+
+function cardEffect(el) {
+  const card = document.querySelector(el);
+  const bounds = card.getBoundingClientRect();
+
+  card.addEventListener("mouseenter", () => {
+    document.addEventListener("mousemove", (e) => {
+      rotateToMouse(e, card, bounds);
+    });
+  });
+
+  card.addEventListener("mouseleave", () => {
+    document.removeEventListener("mousemove", (e) => {
+      rotateToMouse(e, card, bounds);
+    });
+    card.style.transform = "";
+    card.style.background = "";
   });
 }
 
@@ -208,55 +265,3 @@ $("#btnChoose").ontouchstart = () => {
 $("#btnChoose").ontouchend = () => {
   clearTimeout(user.timer);
 };
-
-function rotateToMouse(e, el, bounds) {
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
-  const leftX = mouseX - bounds.x;
-  const topY = mouseY - bounds.y;
-  const center = {
-    x: leftX - bounds.width / 2,
-    y: topY - bounds.height / 2,
-  };
-
-  // const distance = Math.sqrt(center.x ** 2 + center.y ** 2);
-
-  //   el.style.transform = `
-  //   scale3d(1.07, 1.07, 1.07)
-  //   rotate3d(
-  //     ${center.y / 100},
-  //     ${-center.x / 100},
-  //     0,
-  //     ${Math.log(distance) * 2}deg
-  //   )
-  // `;
-
-  el.querySelector(".glow").style.backgroundImage = `
-    radial-gradient(
-      circle at
-      ${center.x * 2 + bounds.width / 2}px
-      ${center.y * 2 + bounds.height / 2}px,
-      #ffffff55,
-      #0000000f
-    )
-  `;
-}
-
-function cardEffect(el) {
-  const card = document.querySelector(el);
-  const bounds = card.getBoundingClientRect();
-
-  card.addEventListener("mouseenter", () => {
-    document.addEventListener("mousemove", (e) => {
-      rotateToMouse(e, card, bounds);
-    });
-  });
-
-  card.addEventListener("mouseleave", () => {
-    document.removeEventListener("mousemove", (e) => {
-      rotateToMouse(e, card, bounds);
-    });
-    card.style.transform = "";
-    card.style.background = "";
-  });
-}
