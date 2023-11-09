@@ -1,5 +1,3 @@
-/*** Functions */
-
 function $(selector) {
   return document.querySelector(selector);
 }
@@ -18,6 +16,7 @@ function generate_deck() {
 
 function show_deck(deck) {
   if (user[deck] !== null) return;
+  sound.play("open");
   user.target = deck;
   $("#btnChoose").disabled = false;
   $("#deck").classList.add("appear");
@@ -29,6 +28,7 @@ function show_deck(deck) {
 
 function chosen() {
   if (!user.target) return;
+  sound.play("chosen", true);
   $("#btnChoose").disabled = true;
   user.decks.circle = generate_deck();
   user.decks.square = generate_deck();
@@ -39,6 +39,7 @@ function chosen() {
   // DON'T ASK MAN...
   animate("#card-back", "wobble").then(() => {
     animate("#card-back", "flipOutY").then(() => {
+      sound.play("reveal");
       $("#card-back").classList.add("hide");
       $("#card-front").classList.remove("hide");
       animate("#card-front", "flipInY").then(() => {
@@ -57,6 +58,7 @@ function chosen() {
               typeof user.square === "number" &&
               typeof user.circle === "number"
             ) {
+              sound.play("alea-iacta-est");
               alea_iacta_est();
             }
           });
@@ -73,12 +75,13 @@ function next() {
 }
 
 function answer() {
+  user.query = "¿Esto es una pregunta?";
   if (!user.query) return;
   $(".query").innerText = user.query;
   $(".answer").innerText =
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam omnis autem, eligendi, minus asperiores repudiandae et consequatur ab accusantium vero quod similique velit modi magni dolorum obcaecati incidunt sunt ipsa!";
   swiper.allowSlideNext = true;
-  swiper.slideNext(600);
+  swiper.slideNext(1400);
   swiper.allowSlideNext = false;
 }
 
@@ -87,10 +90,13 @@ function alea_iacta_est() {
   $("#background").classList.add("universe");
   setTimeout(() => {
     swiper.allowSlideNext = true;
-    swiper.slideNext(2000);
+    swiper.slideNext(1400);
     swiper.allowSlideNext = false;
-  }, 8000);
-  //setTimeout(answer, 6000);
+    setTimeout(() => {
+      sound.play("the-answer");
+    }, 6500);
+    setTimeout(answer, 7000);
+  }, 5200);
 }
 
 function animate(element, animation, prefix = "animate__") {
@@ -159,7 +165,57 @@ function cardEffect(el) {
   });
 }
 
-/*** Vars */
+const sound = {
+  context: null,
+  files: null,
+  playing: null,
+  load: async function (files) {
+    const loaded = {};
+    for (const file of files) {
+      console.log(`Loading "sfx/${file}.ogg" ...`);
+      const audioElement = new Audio();
+      await new Promise((resolve) => {
+        audioElement.addEventListener("canplaythrough", function () {
+          loaded[file] = audioElement;
+          resolve();
+        });
+        audioElement.src = `sfx/${file}.ogg`;
+      });
+    }
+    console.log("All sound files are loaded:", loaded);
+    this.files = loaded;
+  },
+  stop: function () {
+    if (this.playing) {
+      this.playing.pause();
+      this.playing.currentTime = 0;
+    }
+  },
+  play: function (file, overlay = false) {
+    if (!this.context) {
+      this.context = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const sfx = this.files[file];
+    this.playing = sfx;
+    if (sfx) {
+      if (!sfx.sourceNode) {
+        sfx.sourceNode = this.context.createMediaElementSource(sfx);
+        sfx.sourceNode.connect(this.context.destination);
+      }
+      if (overlay) {
+        const audioInstance = new Audio(sfx.src);
+        audioInstance.addEventListener("ended", function () {
+          this.remove();
+        });
+        audioInstance.play();
+      } else {
+        sfx.play();
+      }
+    } else {
+      console.error(`El sonido "${file}" no se ha pre-cargado.`);
+    }
+  },
+};
 
 const user = {
   decks: {
@@ -194,6 +250,22 @@ const deckSwiper = new Swiper(".mySwiperDeck", {
   initialSlide: 5,
 });
 
+deckSwiper.on("slideChange", function () {
+  sound.play("shuffling");
+});
+
+sound.load([
+  "the-answer",
+  "alea-iacta-est",
+  "reveal",
+  "open",
+  "close",
+  "chosen",
+  "holding",
+  "shuffling",
+  "slot-hover",
+]);
+
 /*** Events */
 
 $("#btnAsk").onclick = (e) => {
@@ -226,6 +298,7 @@ $("#btnDraw").onclick = (e) => {
   next();
   user.decks.circle = generate_deck();
   user.decks.square = generate_deck();
+  classList;
   user.decks.triangle = generate_deck();
 };
 
@@ -241,25 +314,46 @@ $(".slot.square").onclick = () => {
   show_deck("square");
 };
 
+$(".slot.triangle").onmouseenter = (e) => {
+  if (!e.target.classList.contains("done")) {
+    sound.play("slot-hover");
+  }
+};
+
+$(".slot.circle").onmouseenter = (e) => {
+  if (!e.target.classList.contains("done")) {
+    sound.play("slot-hover");
+  }
+};
+
+$(".slot.square").onmouseenter = (e) => {
+  if (!e.target.classList.contains("done")) {
+    sound.play("slot-hover");
+  }
+};
+
 $("#btnBack").onclick = () => {
+  sound.play("close");
   $("#deck").classList.remove("appear");
   deckSwiper.disable();
 };
 
 $("#btnChoose").onmousedown = () => {
+  sound.play("holding");
   user.timer = setTimeout(() => {
     chosen();
-  }, 1000);
+  }, 1200);
 };
 
 $("#btnChoose").onmouseup = () => {
+  sound.stop();
   clearTimeout(user.timer);
 };
 
 $("#btnChoose").ontouchstart = () => {
   user.timer = setTimeout(() => {
     chosen();
-  }, 1000);
+  }, 1200);
 };
 
 $("#btnChoose").ontouchend = () => {
