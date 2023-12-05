@@ -2,6 +2,20 @@ function $(selector) {
   return document.querySelector(selector);
 }
 
+function restore() {
+  console.log("Restoring last throw...");
+  $("#query").value = user.query;
+  swiper.allowSlideNext = true;
+  swiper.slideTo(user.slide, 1000);
+  swiper.allowSlideNext = false;
+}
+
+function save(slide) {
+  user.slide = slide;
+  console.log("Saving...", user);
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
 function generate_deck() {
   const deck = [];
   for (let i = 0; i < 10; i++) {
@@ -217,7 +231,7 @@ const sound = {
   },
 };
 
-const user = {
+const defaultUser = {
   decks: {
     triangle: null,
     square: null,
@@ -229,7 +243,10 @@ const user = {
   triangle: null,
   square: null,
   circle: null,
+  slide: 0,
 };
+
+const user = JSON.parse(localStorage.getItem("user")) || defaultUser;
 
 const swiper = new Swiper(".mySwiper", {
   speed: 600,
@@ -250,21 +267,13 @@ const deckSwiper = new Swiper(".mySwiperDeck", {
   initialSlide: 5,
 });
 
+swiper.on("slideChange", function () {
+  console.log("Current slide index:", swiper.activeIndex);
+});
+
 deckSwiper.on("slideChange", function () {
   sound.play("shuffling");
 });
-
-sound.load([
-  "the-answer",
-  "alea-iacta-est",
-  "reveal",
-  "open",
-  "close",
-  "chosen",
-  "holding",
-  "shuffling",
-  "slot-hover",
-]);
 
 /*** Events */
 
@@ -298,8 +307,8 @@ $("#btnDraw").onclick = (e) => {
   next();
   user.decks.circle = generate_deck();
   user.decks.square = generate_deck();
-  classList;
   user.decks.triangle = generate_deck();
+  save(3);
 };
 
 $(".slot.triangle").onclick = () => {
@@ -359,3 +368,26 @@ $("#btnChoose").ontouchstart = () => {
 $("#btnChoose").ontouchend = () => {
   clearTimeout(user.timer);
 };
+
+window.addEventListener("load", function () {
+  sound
+    .load([
+      "the-answer",
+      "alea-iacta-est",
+      "reveal",
+      "open",
+      "close",
+      "chosen",
+      "holding",
+      "shuffling",
+      "slot-hover",
+    ])
+    .then(() => {
+      console.log("User:", user);
+      // Hide loading
+      // Load last throw
+      if (user.slide) {
+        restore();
+      }
+    });
+});
