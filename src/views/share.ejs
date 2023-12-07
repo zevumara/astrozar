@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Astrozar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" href="/styles.min.css" />
+  </head>
+  <body>
+    <div class="swiper mySwiper">
+      <div id="background" class="parallax-bg" data-swiper-parallax-y="-5%"></div>
+      <div class="star-field">
+        <div class="layer"></div>
+        <div class="layer"></div>
+        <div class="layer"></div>
+        <div class="layer"></div>
+      </div>
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="container inner">
+            <h2 class="query"><%= data.query %></h2>
+            <h1 class="answer"><%= data.answer %></h1>
+            <ul>
+              <li>
+                <a href="http://">Share</a>
+              </li>
+              <li>
+                <a href="./">Ask me again</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

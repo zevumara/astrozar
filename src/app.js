@@ -5,14 +5,39 @@ function $(selector) {
 function restore() {
   console.log("Restoring last throw...");
   $("#query").value = user.query;
+  if (typeof user.circle === "number") {
+    $(".slot.circle").classList.remove("pulse");
+    $(".slot.circle").classList.add("done");
+    $(".slot.circle").classList.add("float");
+    cardEffect(".slot.circle");
+  }
+  if (typeof user.square === "number") {
+    $(".slot.square").classList.remove("pulse");
+    $(".slot.square").classList.add("done");
+    $(".slot.square").classList.add("float");
+    cardEffect(".slot.square");
+  }
+  if (typeof user.triangle === "number") {
+    $(".slot.triangle").classList.remove("pulse");
+    $(".slot.triangle").classList.add("done");
+    $(".slot.triangle").classList.add("float");
+    cardEffect(".slot.triangle");
+  }
   swiper.allowSlideNext = true;
   swiper.slideTo(user.slide, 1000);
   swiper.allowSlideNext = false;
+  if (
+    typeof user.triangle === "number" &&
+    typeof user.square === "number" &&
+    typeof user.circle === "number"
+  ) {
+    sound.play("alea-iacta-est");
+    alea_iacta_est();
+  }
 }
 
 function save(slide) {
   user.slide = slide;
-  console.log("Saving...", user);
   localStorage.setItem("user", JSON.stringify(user));
 }
 
@@ -48,6 +73,7 @@ function chosen() {
   user.decks.square = generate_deck();
   user.decks.triangle = generate_deck();
   user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
+  save(3);
   $("#deck").classList.remove("appear");
   $("#chosen").classList.remove("hide");
   // DON'T ASK MAN...
@@ -89,6 +115,7 @@ function next() {
 }
 
 function answer() {
+  localStorage.clear();
   user.query = "¿Esto es una pregunta?";
   if (!user.query) return;
   $(".query").innerText = user.query;
@@ -265,10 +292,6 @@ const deckSwiper = new Swiper(".mySwiperDeck", {
   enabled: false,
   keyboard: true,
   initialSlide: 5,
-});
-
-swiper.on("slideChange", function () {
-  console.log("Current slide index:", swiper.activeIndex);
 });
 
 deckSwiper.on("slideChange", function () {
