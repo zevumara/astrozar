@@ -1,3 +1,3 @@
-const api_key = "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";
+const api_key = "WTF";
 
 module.exports = api_key;
