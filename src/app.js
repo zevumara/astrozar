@@ -120,8 +120,8 @@ function next() {
 }
 
 function answer() {
-  localStorage.clear();
   if (!user.query || !user.answer) return;
+  localStorage.clear();
   $(".query").innerText = user.query;
   $(".answer").innerText = user.answer;
   $("#btnShare").href = `http://localhost:3000/s/${user.id}`;
@@ -139,23 +139,27 @@ function alea_iacta_est() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: user.query,
-        circle: user.circle,
-        triangle: user.triangle,
-        square: user.square,
+        q: user.query,
+        c: user.circle,
+        t: user.triangle,
+        s: user.square,
       }),
     });
-    const spread = await response.json();
-    user.id = spread.id;
-    user.answer = spread.answer;
-    save(5);
-    swiper.allowSlideNext = true;
-    swiper.slideNext(1400);
-    swiper.allowSlideNext = false;
-    setTimeout(() => {
-      sound.play("the-answer");
-    }, 6500);
-    setTimeout(answer, 7000);
+    if (response.ok) {
+      const spread = await response.json();
+      user.id = spread.id;
+      user.answer = spread.answer;
+      save(5);
+      swiper.allowSlideNext = true;
+      swiper.slideNext(1400);
+      swiper.allowSlideNext = false;
+      setTimeout(() => {
+        sound.play("the-answer");
+      }, 6500);
+      setTimeout(answer, 7000);
+    } else {
+      console.error("Error:", response.status);
+    }
   }, 3200);
 }
 

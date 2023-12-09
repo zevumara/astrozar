@@ -7,7 +7,7 @@ const port = process.env.PORT;
 const mongoose = require("mongoose");
 const parser = require("body-parser");
 const OpenAI = require("openai");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, query } = require("express-validator");
 
 const cards = require("./src/cfg/cards");
 const generate_prompt = require("./src/cfg/prompt");
@@ -25,9 +25,24 @@ mongoose.connection.once("connected", () => console.log("Connected to MongoDB"))
 const Spread = mongoose.model("Spread", {
   query: String,
   answer: String,
-  circle: Number,
-  triangle: Number,
-  square: Number,
+  circle: [
+    {
+      number: Number,
+      word: String,
+    },
+  ],
+  triangle: [
+    {
+      number: Number,
+      word: String,
+    },
+  ],
+  square: [
+    {
+      number: Number,
+      word: String,
+    },
+  ],
 });
 
 const openai = new OpenAI({
@@ -47,34 +62,63 @@ app.get("/s/:id", async (req, res) => {
   }
 });
 
-app.post("/q", async (req, res) => {
-  const { query, circle, triangle, square } = req.body;
+app.post(
+  "/q",
+  [
+    body("q").isString().isLength({ min: 20, max: 255 }),
+    body("c").isInt({ min: 0, max: 10 }),
+    body("t").isInt({ min: 0, max: 10 }),
+    body("s").isInt({ min: 0, max: 10 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  // Validaciones //
+    const { q, c, t, s } = req.body;
 
-  const c_card = cards.circle[circle];
-  const t_card = cards.triangle[triangle];
-  const s_card = cards.square[square];
+    const c_word = cards.circle[c][Math.floor(Math.random() * cards.circle[c].length)];
+    const t_word = cards.triangle[t][Math.floor(Math.random() * cards.triangle[t].length)];
+    const s_word = cards.square[s][Math.floor(Math.random() * cards.square[s].length)];
 
-  const word1 = c_card[Math.floor(Math.random() * c_card.length)];
-  const word2 = t_card[Math.floor(Math.random() * t_card.length)];
-  const word3 = s_card[Math.floor(Math.random() * s_card.length)];
+    const prompt = generate_prompt(q, c_word, t_word, s_word);
 
-  const prompt = generate_prompt(query, word1, word2, word3);
-
-  try {
-    chat_completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
-    });
-    const answer = chat_completion.choices[0].message.content;
-    const spread = new Spread({ query, answer, circle, triangle, square });
-    await spread.save();
-    res.json({ id: spread._id, answer: answer });
-  } catch (error) {
-    res.status(500).json({ error: error });
+    try {
+      chat_completion = await openai.chat.completions.create({
+        messages: [{ role: "user", content: prompt }],
+        model: "gpt-3.5-turbo",
+      });
+      const answer = chat_completion.choices[0].message.content;
+      const spread = new Spread({
+        query: q,
+        answer: answer,
+        circle: [
+          {
+            number: c,
+            word: c_word,
+          },
+        ],
+        triangle: [
+          {
+            number: t,
+            word: t_word,
+          },
+        ],
+        square: [
+          {
+            number: s,
+            word: s_word,
+          },
+        ],
+      });
+      await spread.save();
+      res.json({ id: spread._id, answer: answer });
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 app.listen(port, () => {
   console.log(`Server running at port ${port}`);
