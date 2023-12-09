@@ -126,9 +126,24 @@ function answer() {
   swiper.allowSlideNext = false;
 }
 
-function alea_iacta_est() {
-  console.log(`Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
+async function alea_iacta_est() {
+  console.log(`(!) Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
   $("#background").classList.add("universe");
+  const response = await fetch("http://localhost:3000/q", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: user.query,
+      circle: user.circle,
+      triangle: user.triangle,
+      square: user.square,
+    }),
+  });
+  const answer = await response.json();
+  console.log(answer);
+  return;
   setTimeout(() => {
     swiper.allowSlideNext = true;
     swiper.slideNext(1400);

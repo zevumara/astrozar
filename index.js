@@ -1,15 +1,19 @@
-const Cards = require("./src/cfg/cards");
-const Prompt = require("./src/cfg/prompt");
-const API_KEY = require("./src/cfg/api_key");
-
-const mongoose = require("mongoose");
 const express = require("express");
-const { body, validationResult } = require("express-validator");
 const app = express();
 const port = 3000;
 
+const mongoose = require("mongoose");
+const parser = require("body-parser");
+const { body, validationResult } = require("express-validator");
+
+const cards = require("./src/cfg/cards");
+const generate_prompt = require("./src/cfg/prompt");
+const API_KEY = require("./src/cfg/api_key");
+
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/src/views");
+
+app.use(parser.json());
 app.use(express.static("public"));
 
 mongoose.connect("mongodb://127.0.0.1:27017/astrozar");
@@ -29,66 +33,53 @@ app.get("/s/:id", async (req, res) => {
     if (data) {
       res.render("share", { data });
     } else {
-      res.status(404).json({ error: "Datos no encontrados" });
+      res.status(404).json({ error: "Data not found" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener los datos" });
+    res.status(500).json({ error: error });
   }
 });
 
 app.post("/q", async (req, res) => {
   const { query, circle, triangle, square } = req.body;
 
-  const circle_card = Cards.circle[circle];
-  const triangle_card = Cards.triangle[triangle];
-  const square_card = Cards.square[square];
+  // Validaciones //
 
-  const circle_keyword = circle_card[Math.floor(Math.random() * circle_card.length)];
-  const triangle_keyword = triangle_card[Math.floor(Math.random() * triangle_card.length)];
-  const square_keyword = square_card[Math.floor(Math.random() * square_card.length)];
+  const c_card = cards.circle[circle];
+  const t_card = cards.triangle[triangle];
+  const s_card = cards.square[square];
 
-  const prompt = `${Prompt} ${circle_keyword}, ${triangle_keyword}, ${square_keyword}`;
+  const word1 = c_card[Math.floor(Math.random() * c_card.length)];
+  const word2 = t_card[Math.floor(Math.random() * t_card.length)];
+  const word3 = s_card[Math.floor(Math.random() * s_card.length)];
 
-  getCompletion(prompt)
-    .then(async (answer) => {
-      console.log("Texto completado:", answer);
-      try {
-        const spread = new Spread({ query, answer, circle, triangle, square });
-        await spread.save();
-        res.json({ message: "Datos guardados exitosamente", id: spread._id });
-      } catch (error) {
-        res.status(500).json({ error: "Error al guardar los datos." });
-      }
-      res.json({ answer: answer });
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      res.status(400).json({ error: error });
-    });
-});
+  const prompt = generate_prompt(query, word1, word2, word3);
 
-async function getCompletion(prompt) {
   try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      },
+      body: JSON.stringify({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 120,
         temperature: 0.1,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${API_KEY}`,
-        },
-      }
-    );
-    return response.data.data.choices[0].message.content;
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      res.json({ answer: data.data.choices[0].message.content });
+    } else {
+      res.status(response.status).json({ error: response.statusText });
+    }
   } catch (error) {
-    console.error("Error en la solicitud a la API de OpenAI:", error);
+    res.status(500).json({ error: error });
   }
-}
+});
 
 app.listen(port, () => {
   console.log(`Server running at port ${port}`);
