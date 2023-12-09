@@ -1,19 +1,22 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 const mongoose = require("mongoose");
 const parser = require("body-parser");
+const OpenAI = require("openai");
 const { body, validationResult } = require("express-validator");
 
 const cards = require("./src/cfg/cards");
 const generate_prompt = require("./src/cfg/prompt");
-const API_KEY = require("./src/cfg/api_key");
 
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/src/views");
 
 app.use(parser.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 mongoose.connect("mongodb://127.0.0.1:27017/astrozar");
@@ -25,6 +28,10 @@ const Spread = mongoose.model("Spread", {
   circle: Number,
   triangle: Number,
   square: Number,
+});
+
+const openai = new OpenAI({
+  apiKey: process.env.API_KEY,
 });
 
 app.get("/s/:id", async (req, res) => {
@@ -56,26 +63,14 @@ app.post("/q", async (req, res) => {
   const prompt = generate_prompt(query, word1, word2, word3);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 120,
-        temperature: 0.1,
-      }),
+    chat_completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "gpt-3.5-turbo",
     });
-
-    if (response.ok) {
-      const data = await response.json();
-      res.json({ answer: data.data.choices[0].message.content });
-    } else {
-      res.status(response.status).json({ error: response.statusText });
-    }
+    const answer = chat_completion.choices[0].message.content;
+    const spread = new Spread({ query, answer, circle, triangle, square });
+    await spread.save();
+    res.json({ id: spread._id, answer: answer });
   } catch (error) {
     res.status(500).json({ error: error });
   }

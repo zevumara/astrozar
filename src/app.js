@@ -26,7 +26,12 @@ function restore() {
   swiper.allowSlideNext = true;
   swiper.slideTo(user.slide, 1000);
   swiper.allowSlideNext = false;
-  if (
+
+  if (user.answer) {
+    $("#background").classList.add("universe");
+    sound.play("the-answer");
+    answer();
+  } else if (
     typeof user.triangle === "number" &&
     typeof user.square === "number" &&
     typeof user.circle === "number"
@@ -116,35 +121,34 @@ function next() {
 
 function answer() {
   localStorage.clear();
-  user.query = "¿Esto es una pregunta?";
-  if (!user.query) return;
+  if (!user.query || !user.answer) return;
   $(".query").innerText = user.query;
-  $(".answer").innerText =
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam omnis autem, eligendi, minus asperiores repudiandae et consequatur ab accusantium vero quod similique velit modi magni dolorum obcaecati incidunt sunt ipsa!";
+  $(".answer").innerText = user.answer;
+  $("#btnShare").href = `http://localhost:3000/s/${user.id}`;
   swiper.allowSlideNext = true;
   swiper.slideNext(1400);
   swiper.allowSlideNext = false;
 }
 
-async function alea_iacta_est() {
-  console.log(`(!) Alea iacta est: ${user.triangle} ${user.circle} ${user.square}`);
+function alea_iacta_est() {
   $("#background").classList.add("universe");
-  const response = await fetch("http://localhost:3000/q", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: user.query,
-      circle: user.circle,
-      triangle: user.triangle,
-      square: user.square,
-    }),
-  });
-  const answer = await response.json();
-  console.log(answer);
-  return;
-  setTimeout(() => {
+  setTimeout(async () => {
+    const response = await fetch("http://localhost:3000/q", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: user.query,
+        circle: user.circle,
+        triangle: user.triangle,
+        square: user.square,
+      }),
+    });
+    const spread = await response.json();
+    user.id = spread.id;
+    user.answer = spread.answer;
+    save(5);
     swiper.allowSlideNext = true;
     swiper.slideNext(1400);
     swiper.allowSlideNext = false;
@@ -152,7 +156,7 @@ async function alea_iacta_est() {
       sound.play("the-answer");
     }, 6500);
     setTimeout(answer, 7000);
-  }, 5200);
+  }, 3200);
 }
 
 function animate(element, animation, prefix = "animate__") {
@@ -286,6 +290,7 @@ const defaultUser = {
   square: null,
   circle: null,
   slide: 0,
+  id: null,
 };
 
 const user = JSON.parse(localStorage.getItem("user")) || defaultUser;
@@ -347,6 +352,25 @@ $("#btnDraw").onclick = (e) => {
   user.decks.square = generate_deck();
   user.decks.triangle = generate_deck();
   save(3);
+};
+
+$("#btnShare").onclick = (e) => {
+  e.preventDefault();
+  navigator.clipboard
+    .writeText(e.target.href)
+    .then(() => {
+      console.log("Texto copiado al portapapeles con éxito.");
+    })
+    .catch((err) => {
+      console.error("Error al copiar al portapapeles:", err);
+    });
+};
+
+$("#btnAskMeAgain").onclick = (e) => {
+  e.preventDefault();
+  swiper.allowSlidePrev = true;
+  swiper.slideTo(1, 1000);
+  swiper.allowSlidePrev = false;
 };
 
 $(".slot.triangle").onclick = () => {

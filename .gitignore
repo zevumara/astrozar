@@ -1,2 +1,2 @@
 node_modules/
-src/cfg/api_key.js
+.env
