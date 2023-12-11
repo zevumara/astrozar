@@ -121,10 +121,11 @@ function next() {
 
 function answer() {
   if (!user.query || !user.answer) return;
-  localStorage.clear();
   $(".query").innerText = user.query;
   $(".answer").innerText = user.answer;
   $("#btnShare").href = `http://localhost:3000/s/${user.id}`;
+  localStorage.clear();
+  user = defaultUser;
   swiper.allowSlideNext = true;
   swiper.slideNext(1400);
   swiper.allowSlideNext = false;
@@ -235,7 +236,7 @@ const sound = {
   playing: null,
   load: async function (files) {
     const loaded = {};
-    for (const file of files) {
+    const loadFiles = files.map(async (file) => {
       console.log(`Loading "sfx/${file}.ogg" ...`);
       const audioElement = new Audio();
       await new Promise((resolve) => {
@@ -245,7 +246,8 @@ const sound = {
         });
         audioElement.src = `sfx/${file}.ogg`;
       });
-    }
+    });
+    await Promise.all(loadFiles);
     console.log("All sound files are loaded:", loaded);
     this.files = loaded;
   },
@@ -281,6 +283,44 @@ const sound = {
   },
 };
 
+const image = {
+  files: null,
+  load: async function (files) {
+    const loaded = {};
+    const loadFiles = files.map(async (file) => {
+      console.log(`Loading "img/${file}.webp" ...`);
+      const imageElement = new Image();
+      await new Promise((resolve) => {
+        imageElement.addEventListener("load", function () {
+          loaded[file] = imageElement;
+          resolve();
+        });
+        imageElement.src = `img/${file}.webp`;
+      });
+    });
+    await Promise.all(loadFiles);
+    console.log("All image files are loaded:", loaded);
+    this.files = loaded;
+  },
+  use: function (file) {
+    return this.files[file];
+  },
+};
+
+async function preloadImages(imagePaths) {
+  const imagePromises = imagePaths.map((path) => {
+    console.log(`Loading "${path}" ...`);
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = (error) => reject(error);
+      img.src = path;
+    });
+  });
+  await Promise.all(imagePromises);
+  console.log("All images files are loaded:", imagePaths);
+}
+
 const defaultUser = {
   decks: {
     triangle: null,
@@ -297,7 +337,7 @@ const defaultUser = {
   id: null,
 };
 
-const user = JSON.parse(localStorage.getItem("user")) || defaultUser;
+let user = JSON.parse(localStorage.getItem("user")) || defaultUser;
 
 const swiper = new Swiper(".mySwiper", {
   speed: 600,
@@ -349,7 +389,6 @@ $("textarea").oninput = (e) => {
 $("#btnDraw").onclick = (e) => {
   e.preventDefault();
   if (!user.query) return;
-  // Download files (sfx?)
   setTimeout(next, 3000); // Avoid after first time (localStorage)
   next();
   user.decks.circle = generate_deck();
@@ -435,25 +474,28 @@ $("#btnChoose").ontouchend = () => {
   clearTimeout(user.timer);
 };
 
-window.addEventListener("load", function () {
-  sound
-    .load([
-      "the-answer",
-      "alea-iacta-est",
-      "reveal",
-      "open",
-      "close",
-      "chosen",
-      "holding",
-      "shuffling",
-      "slot-hover",
-    ])
-    .then(() => {
-      console.log("User:", user);
-      // Hide loading
-      // Load last throw
-      if (user.slide) {
-        restore();
-      }
-    });
+window.addEventListener("load", async () => {
+  await sound.load([
+    "the-answer",
+    "alea-iacta-est",
+    "reveal",
+    "open",
+    "close",
+    "chosen",
+    "holding",
+    "shuffling",
+    "slot-hover",
+  ]);
+  await image.load(["background-default", "background-stars"]);
+  await preloadImages([
+    "https://swiperjs.com/demos/images/nature-1.jpg",
+    "https://i.ibb.co/87GbbFP/2799006.jpg",
+  ]);
+  animate("#loader .icon", "backOutDown");
+  animate(".curtain.left", "fadeOutLeft");
+  await animate(".curtain.right", "fadeOutRight");
+  $("#loader").classList.add("hide");
+  if (user.slide) {
+    restore();
+  }
 });

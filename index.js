@@ -7,7 +7,7 @@ const port = process.env.PORT;
 const mongoose = require("mongoose");
 const parser = require("body-parser");
 const OpenAI = require("openai");
-const { body, validationResult, query } = require("express-validator");
+const { body, validationResult } = require("express-validator");
 
 const cards = require("./src/cfg/cards");
 const generate_prompt = require("./src/cfg/prompt");

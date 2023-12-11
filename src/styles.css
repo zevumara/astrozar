@@ -41,12 +41,12 @@ ul {
   height: 130%;
   background-size: cover;
   background-position: center;
-  background-image: url(https://swiperjs.com/demos/images/nature-1.jpg);
+  background-image: url(img/background-default.webp);
   transition: all 4s;
 }
 
 .universe {
-  background: url(https://i.ibb.co/87GbbFP/2799006.jpg) no-repeat;
+  background: url(img/background-stars.webp) no-repeat;
   background-size: cover;
   width: 130%;
   height: 130%;
@@ -388,6 +388,40 @@ textarea {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   font-size: 40px;
   overflow: hidden;
+}
+
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+
+#loader .curtain {
+  position: fixed;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 1);
+  backdrop-filter: blur(7px);
+}
+
+#loader .curtain.left {
+  left: 0;
+}
+
+#loader .curtain.right {
+  right: 0;
+}
+
+#loader .icon {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+  width: 50px;
+  height: 50px;
 }
 
 /*** Animations */
