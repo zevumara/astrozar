@@ -3,50 +3,56 @@ function $(selector) {
 }
 
 function restore() {
-  console.log("Restoring last throw...");
   $("#query").value = user.query;
   if (typeof user.circle === "number") {
     $(".slot.circle").classList.remove("pulse");
     $(".slot.circle").classList.add("done");
     $(".slot.circle").classList.add("float");
-    cardEffect(".slot.circle");
   }
   if (typeof user.square === "number") {
     $(".slot.square").classList.remove("pulse");
     $(".slot.square").classList.add("done");
     $(".slot.square").classList.add("float");
-    cardEffect(".slot.square");
   }
   if (typeof user.triangle === "number") {
     $(".slot.triangle").classList.remove("pulse");
     $(".slot.triangle").classList.add("done");
     $(".slot.triangle").classList.add("float");
-    cardEffect(".slot.triangle");
   }
   swiper.allowSlideNext = true;
   swiper.slideTo(user.slide, 1000);
   swiper.allowSlideNext = false;
-
   if (user.answer) {
     $("#background").classList.add("universe");
     sound.play("the-answer");
-    answer();
+    showAnswer();
   } else if (
     typeof user.triangle === "number" &&
     typeof user.square === "number" &&
     typeof user.circle === "number"
   ) {
     sound.play("alea-iacta-est");
-    alea_iacta_est();
+    aleaIactaEst();
   }
 }
 
 function save(slide) {
   user.slide = slide;
   localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("lastSlide", slide);
 }
 
-function generate_deck() {
+function drawYourCards() {
+  if (!user.query) return;
+  setTimeout(nextSlide, 3000); // Avoid after first time (localStorage)
+  nextSlide();
+  user.decks.circle = generateDeck();
+  user.decks.square = generateDeck();
+  user.decks.triangle = generateDeck();
+  save(3);
+}
+
+function generateDeck() {
   const deck = [];
   for (let i = 0; i < 10; i++) {
     let cardIndex;
@@ -58,7 +64,7 @@ function generate_deck() {
   return deck;
 }
 
-function show_deck(deck) {
+function showDeck(deck) {
   if (user[deck] !== null) return;
   sound.play("open");
   user.target = deck;
@@ -70,68 +76,63 @@ function show_deck(deck) {
   deckSwiper.enable();
 }
 
-function chosen() {
+async function chooseCard() {
   if (!user.target) return;
   sound.play("chosen", true);
   $("#btnChoose").disabled = true;
-  user.decks.circle = generate_deck();
-  user.decks.square = generate_deck();
-  user.decks.triangle = generate_deck();
+  user.decks.circle = generateDeck();
+  user.decks.square = generateDeck();
+  user.decks.triangle = generateDeck();
   user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
   save(3);
   $("#deck").classList.remove("appear");
   $("#chosen").classList.remove("hide");
-  // DON'T ASK MAN...
-  animate("#card-back", "wobble").then(() => {
-    animate("#card-back", "flipOutY").then(() => {
-      sound.play("reveal");
-      $("#card-back").classList.add("hide");
-      $("#card-front").classList.remove("hide");
-      animate("#card-front", "flipInY").then(() => {
-        animate("#card-front", "zoomOutUp").then(() => {
-          $("#card-front").classList.add("hide");
-          $(`.slot.${[user.target]}`).classList.remove("pulse");
-          $(`.slot.${[user.target]}`).classList.add("done");
-          $(`.slot.${[user.target]}`).classList.add("float");
-          cardEffect(`.slot.${[user.target]}`);
-          animate("#chosen", "fadeOut").then(() => {
-            $("#chosen").classList.add("hide");
-            $("#card-back").classList.remove("hide");
-            $("#btnChoose").disabled = false;
-            if (
-              typeof user.triangle === "number" &&
-              typeof user.square === "number" &&
-              typeof user.circle === "number"
-            ) {
-              sound.play("alea-iacta-est");
-              alea_iacta_est();
-            }
-          });
-        });
-      });
-    });
-  });
+  // Animation when choosing the card
+  await animate("#card-back", "wobble");
+  await animate("#card-back", "flipOutY");
+  sound.play("reveal");
+  $("#card-back").classList.add("hide");
+  $("#card-front").classList.remove("hide");
+  await animate("#card-front", "flipInY");
+  await animate("#card-front", "zoomOutUp");
+  $("#card-front").classList.add("hide");
+  $(`.slot.${[user.target]}`).classList.remove("pulse");
+  $(`.slot.${[user.target]}`).classList.add("done");
+  $(`.slot.${[user.target]}`).classList.add("float");
+  await animate("#chosen", "fadeOut");
+  $("#chosen").classList.add("hide");
+  $("#card-back").classList.remove("hide");
+  $("#btnChoose").disabled = false;
+  // The three cards were choosen
+  if (
+    typeof user.triangle === "number" &&
+    typeof user.square === "number" &&
+    typeof user.circle === "number"
+  ) {
+    sound.play("alea-iacta-est");
+    aleaIactaEst();
+  }
 }
 
-function next() {
+function nextSlide() {
   swiper.allowSlideNext = true;
   swiper.slideNext(600);
   swiper.allowSlideNext = false;
 }
 
-function answer() {
+function showAnswer() {
   if (!user.query || !user.answer) return;
   $(".query").innerText = user.query;
   $(".answer").innerText = user.answer;
   $("#btnShare").href = `http://localhost:3000/s/${user.id}`;
-  localStorage.clear();
+  localStorage.removeItem("user");
   user = defaultUser;
   swiper.allowSlideNext = true;
   swiper.slideNext(1400);
   swiper.allowSlideNext = false;
 }
 
-function alea_iacta_est() {
+function aleaIactaEst() {
   $("#background").classList.add("universe");
   setTimeout(async () => {
     const response = await fetch("http://localhost:3000/q", {
@@ -157,7 +158,7 @@ function alea_iacta_est() {
       setTimeout(() => {
         sound.play("the-answer");
       }, 6500);
-      setTimeout(answer, 7000);
+      setTimeout(showAnswer, 7000);
     } else {
       console.error("Error:", response.status);
     }
@@ -165,7 +166,7 @@ function alea_iacta_est() {
 }
 
 function animate(element, animation, prefix = "animate__") {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const animationName = `${prefix}${animation}`;
     const node = $(element);
     node.classList.add(`${prefix}animated`, animationName);
@@ -175,58 +176,6 @@ function animate(element, animation, prefix = "animate__") {
       resolve("Animation ended");
     }
     node.addEventListener("animationend", handleAnimationEnd, { once: true });
-  });
-}
-
-function rotateToMouse(e, el, bounds) {
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
-  const leftX = mouseX - bounds.x;
-  const topY = mouseY - bounds.y;
-  const center = {
-    x: leftX - bounds.width / 2,
-    y: topY - bounds.height / 2,
-  };
-
-  // const distance = Math.sqrt(center.x ** 2 + center.y ** 2);
-
-  //   el.style.transform = `
-  //   scale3d(1.07, 1.07, 1.07)
-  //   rotate3d(
-  //     ${center.y / 100},
-  //     ${-center.x / 100},
-  //     0,
-  //     ${Math.log(distance) * 2}deg
-  //   )
-  // `;
-
-  el.querySelector(".glow").style.backgroundImage = `
-    radial-gradient(
-      circle at
-      ${center.x * 2 + bounds.width / 2}px
-      ${center.y * 2 + bounds.height / 2}px,
-      #ffffff55,
-      #0000000f
-    )
-  `;
-}
-
-function cardEffect(el) {
-  const card = document.querySelector(el);
-  const bounds = card.getBoundingClientRect();
-
-  card.addEventListener("mouseenter", () => {
-    document.addEventListener("mousemove", (e) => {
-      rotateToMouse(e, card, bounds);
-    });
-  });
-
-  card.addEventListener("mouseleave", () => {
-    document.removeEventListener("mousemove", (e) => {
-      rotateToMouse(e, card, bounds);
-    });
-    card.style.transform = "";
-    card.style.background = "";
   });
 }
 
@@ -366,7 +315,18 @@ deckSwiper.on("slideChange", function () {
 
 $("#btnAsk").onclick = (e) => {
   e.preventDefault();
-  next();
+  $("#background").classList.add("universe");
+  nextSlide();
+};
+
+$("textarea").onkeydown = (e) => {
+  if (e.keyCode === 13) {
+    e.preventDefault();
+    const characters = e.target.value.length;
+    if (characters > 20 && characters < 255) {
+      drawYourCards();
+    }
+  }
 };
 
 $("textarea").oninput = (e) => {
@@ -388,13 +348,7 @@ $("textarea").oninput = (e) => {
 
 $("#btnDraw").onclick = (e) => {
   e.preventDefault();
-  if (!user.query) return;
-  setTimeout(next, 3000); // Avoid after first time (localStorage)
-  next();
-  user.decks.circle = generate_deck();
-  user.decks.square = generate_deck();
-  user.decks.triangle = generate_deck();
-  save(3);
+  drawYourCards();
 };
 
 $("#btnShare").onclick = (e) => {
@@ -417,15 +371,15 @@ $("#btnAskMeAgain").onclick = (e) => {
 };
 
 $(".slot.triangle").onclick = () => {
-  show_deck("triangle");
+  showDeck("triangle");
 };
 
 $(".slot.circle").onclick = () => {
-  show_deck("circle");
+  showDeck("circle");
 };
 
 $(".slot.square").onclick = () => {
-  show_deck("square");
+  showDeck("square");
 };
 
 $(".slot.triangle").onmouseenter = (e) => {
@@ -454,9 +408,7 @@ $("#btnBack").onclick = () => {
 
 $("#btnChoose").onmousedown = () => {
   sound.play("holding");
-  user.timer = setTimeout(() => {
-    chosen();
-  }, 1200);
+  user.timer = setTimeout(chooseCard, 1200);
 };
 
 $("#btnChoose").onmouseup = () => {
@@ -465,9 +417,7 @@ $("#btnChoose").onmouseup = () => {
 };
 
 $("#btnChoose").ontouchstart = () => {
-  user.timer = setTimeout(() => {
-    chosen();
-  }, 1200);
+  user.timer = setTimeout(chooseCard, 1200);
 };
 
 $("#btnChoose").ontouchend = () => {

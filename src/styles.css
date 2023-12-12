@@ -446,10 +446,10 @@ textarea {
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.8);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+    box-shadow: 0 0 0 15px rgba(255, 0, 0, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
@@ -514,6 +514,63 @@ textarea {
   to {
     transform: translateZ(200px);
     opacity: 1;
+  }
+}
+
+.tooltip {
+  position: absolute;
+  font-size: 1rem;
+  color: black;
+  background-color: white;
+  padding: 1em 1em 0.7em 1em;
+  border-radius: 10px;
+  box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.5);
+  animation: beat 2s ease-in-out infinite;
+  z-index: 9999;
+  margin: 2em;
+  text-align: left;
+  line-height: 1.1em;
+  max-width: 22em;
+}
+.tooltip .content {
+  background-repeat: no-repeat;
+  padding-left: 65px;
+  background-size: contain;
+  background-position: 0 2px;
+  min-height: 60px;
+}
+.tooltip .content .hint {
+  font-weight: bold;
+  opacity: 0.3;
+}
+.tooltip .content p {
+  margin-bottom: 0.2em;
+}
+
+#tooltip-slots {
+  top: 0;
+}
+#tooltip-slots .content {
+  background-image: url(img/icon-pointer.png);
+}
+#tooltip-complete {
+  bottom: 0;
+  text-align: center;
+  max-width: 16em;
+}
+#tooltip-complete .content {
+  padding-left: 0;
+}
+
+@keyframes beat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
