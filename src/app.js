@@ -45,10 +45,12 @@ function save(slide) {
 
 function drawYourCards() {
   if (!user.query) return;
+  const delay = localStorage.getItem("shuffling-cards") ? 1500 : 3000;
   setTimeout(() => {
     nextSlide();
-    tooltip.show("slots", "zoomInDown", 2000);
-  }, 3000); // Avoid after first time (localStorage)
+    tooltip.show("slots", "zoomInDown");
+    localStorage.setItem("shuffling-cards", 1);
+  }, delay);
   nextSlide();
   user.decks.circle = generateDeck();
   user.decks.square = generateDeck();
@@ -266,7 +268,7 @@ const image = {
 };
 
 const tooltip = {
-  show: function (name, animation = "zoomInDown", delay = 2000) {
+  show: function (name, animation = "zoomInDown", delay = 1000) {
     if (localStorage.getItem(`tooltip-${name}`)) return;
     setTimeout(async () => {
       $(`#tooltip-${name}`).classList.remove("hide");
@@ -274,7 +276,7 @@ const tooltip = {
       $(`#tooltip-${name}`).classList.add("animated");
     }, delay);
   },
-  hide: async function (name, animation = "zoomOut", delay = 0) {
+  hide: function (name, animation = "zoomOut", delay = 0) {
     setTimeout(async () => {
       $(`#tooltip-${name}`).classList.remove("animated");
       await animate(`#tooltip-${name}`, animation);
@@ -283,21 +285,6 @@ const tooltip = {
     }, delay);
   },
 };
-
-// Delete this:
-async function preloadImages(imagePaths) {
-  const imagePromises = imagePaths.map((path) => {
-    console.log(`Loading "${path}" ...`);
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = (error) => reject(error);
-      img.src = path;
-    });
-  });
-  await Promise.all(imagePromises);
-  console.log("All images files are loaded:", imagePaths);
-}
 
 const defaultUser = {
   decks: {
@@ -468,10 +455,6 @@ window.addEventListener("load", async () => {
     "slot-hover",
   ]);
   await image.load(["background-default", "background-stars"]);
-  await preloadImages([
-    "https://swiperjs.com/demos/images/nature-1.jpg",
-    "https://i.ibb.co/87GbbFP/2799006.jpg",
-  ]);
   animate("#loader .icon", "backOutDown");
   animate(".curtain.left", "fadeOutLeft");
   await animate(".curtain.right", "fadeOutRight");

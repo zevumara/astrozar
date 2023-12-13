@@ -522,11 +522,10 @@ textarea {
   position: absolute;
   font-size: 1rem;
   color: black;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 1em 1em 0.7em 1em;
   border-radius: 10px;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.5);
-  /*animation: beat 2s ease-in-out infinite;*/
   z-index: 9999;
   margin: 2em;
   text-align: left;
