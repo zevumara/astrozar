@@ -56,16 +56,18 @@
         </div>
         <div class="swiper-slide" id="slots">
           <div class="container">
-            <div class="tooltip" id="tooltip-slots">
+            <div class="tooltip hide" id="tooltip-slots">
               <div class="content">
-                <p class="hint">PISTA</p>
-                <p>Presiona sobre alguna ranura para colocar una carta.</p>
+                <p class="hint">Astrozar</p>
+                <p>
+                  Presioná sobre alguna de las <strong>tres ranuras</strong> para colocar una carta.
+                </p>
               </div>
             </div>
-            <div class="tooltip" id="tooltip-complete">
+            <div class="tooltip hide" id="tooltip-complete">
               <div class="content">
-                <p class="hint">PISTA</p>
-                <p>Repite la acción hasta seleccionar las tres cartas.</p>
+                <p class="hint">Astrozar</p>
+                <p>Repetí la acción hasta seleccionar las <strong>tres cartas</strong>.</p>
               </div>
             </div>
             <div class="slot triangle pulse"></div>
@@ -105,6 +107,15 @@
     <div id="deck" class="deck-wrapper">
       <div class="row">
         <button id="btnBack">Go back</button>
+        <div class="tooltip hide" id="tooltip-drag">
+          <div class="content">
+            <p class="hint">Astrozar</p>
+            <p>
+              Arrastrá las cartas hacia la izquierda o hacia la derecha hasta elegir una.
+              <strong>Guiate por tu intuición.</strong>
+            </p>
+          </div>
+        </div>
       </div>
       <div class="row big">
         <div class="swiper-deck mySwiperDeck">
@@ -126,6 +137,12 @@
         <button id="btnChoose" class="pulse">
           <span>HOLD</span>
         </button>
+        <div class="tooltip hide" id="tooltip-hold">
+          <div class="content">
+            <p class="hint">Astrozar</p>
+            <p>Una vez elegida, mantené presionado el botón de abajo por varios segundos.</p>
+          </div>
+        </div>
       </div>
     </div>
 

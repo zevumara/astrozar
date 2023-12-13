@@ -247,6 +247,7 @@ ul {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .deck-wrapper .row.big {
@@ -468,21 +469,21 @@ textarea {
 @keyframes float {
   0% {
     box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
-    transform: translatey(0px);
+    transform: translateY(0px);
   }
   50% {
     box-shadow: 0 45px 15px 0px rgba(0, 0, 0, 0.2);
-    transform: translatey(-40px);
+    transform: translateY(-40px);
   }
   100% {
     box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
-    transform: translatey(0px);
+    transform: translateY(0px);
   }
 }
 
 .float {
   box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
-  transform: translatey(0px);
+  transform: translateY(0px);
   animation: float 6s ease-in-out infinite;
 }
 
@@ -525,12 +526,15 @@ textarea {
   padding: 1em 1em 0.7em 1em;
   border-radius: 10px;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.5);
-  animation: beat 2s ease-in-out infinite;
+  /*animation: beat 2s ease-in-out infinite;*/
   z-index: 9999;
   margin: 2em;
   text-align: left;
   line-height: 1.1em;
   max-width: 22em;
+}
+.tooltip.animated {
+  animation: beat 2s ease-in-out infinite;
 }
 .tooltip .content {
   background-repeat: no-repeat;
@@ -560,6 +564,22 @@ textarea {
 }
 #tooltip-complete .content {
   padding-left: 0;
+}
+#tooltip-drag {
+  top: 0;
+  max-width: 29em;
+}
+#tooltip-drag .content {
+  background-image: url(img/icon-grabbing.png);
+  padding-left: 70px;
+}
+#tooltip-hold {
+  top: -7em;
+}
+#tooltip-hold .content {
+  padding-left: 0;
+  text-align: center;
+  max-width: 14em;
 }
 
 @keyframes beat {

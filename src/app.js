@@ -22,8 +22,9 @@ function restore() {
   swiper.allowSlideNext = true;
   swiper.slideTo(user.slide, 1000);
   swiper.allowSlideNext = false;
+  tooltip.show("slots", "zoomInDown");
+  $("#background").classList.add("universe");
   if (user.answer) {
-    $("#background").classList.add("universe");
     sound.play("the-answer");
     showAnswer();
   } else if (
@@ -44,7 +45,10 @@ function save(slide) {
 
 function drawYourCards() {
   if (!user.query) return;
-  setTimeout(nextSlide, 3000); // Avoid after first time (localStorage)
+  setTimeout(() => {
+    nextSlide();
+    tooltip.show("slots", "zoomInDown", 2000);
+  }, 3000); // Avoid after first time (localStorage)
   nextSlide();
   user.decks.circle = generateDeck();
   user.decks.square = generateDeck();
@@ -70,14 +74,17 @@ function showDeck(deck) {
   user.target = deck;
   $("#btnChoose").disabled = false;
   $("#deck").classList.add("appear");
+  tooltip.hide("slots");
+  tooltip.show("drag");
   deckSwiper.slideTo(5, 0);
-  deckSwiper.update();
+  deckSwiper.update(); // Bug fix?
   deckSwiper.update();
   deckSwiper.enable();
 }
 
 async function chooseCard() {
   if (!user.target) return;
+  tooltip.hide("hold");
   sound.play("chosen", true);
   $("#btnChoose").disabled = true;
   user.decks.circle = generateDeck();
@@ -99,6 +106,7 @@ async function chooseCard() {
   $(`.slot.${[user.target]}`).classList.remove("pulse");
   $(`.slot.${[user.target]}`).classList.add("done");
   $(`.slot.${[user.target]}`).classList.add("float");
+  tooltip.show("complete", "zoomInUp");
   await animate("#chosen", "fadeOut");
   $("#chosen").classList.add("hide");
   $("#card-back").classList.remove("hide");
@@ -133,6 +141,7 @@ function showAnswer() {
 }
 
 function aleaIactaEst() {
+  tooltip.hide("complete", "zoomInUp");
   $("#background").classList.add("universe");
   setTimeout(async () => {
     const response = await fetch("http://localhost:3000/q", {
@@ -256,6 +265,26 @@ const image = {
   },
 };
 
+const tooltip = {
+  show: function (name, animation = "zoomInDown", delay = 2000) {
+    if (localStorage.getItem(`tooltip-${name}`)) return;
+    setTimeout(async () => {
+      $(`#tooltip-${name}`).classList.remove("hide");
+      await animate(`#tooltip-${name}`, animation);
+      $(`#tooltip-${name}`).classList.add("animated");
+    }, delay);
+  },
+  hide: async function (name, animation = "zoomOut", delay = 0) {
+    setTimeout(async () => {
+      $(`#tooltip-${name}`).classList.remove("animated");
+      await animate(`#tooltip-${name}`, animation);
+      $(`#tooltip-${name}`).classList.add("hide");
+      localStorage.setItem(`tooltip-${name}`, 1);
+    }, delay);
+  },
+};
+
+// Delete this:
 async function preloadImages(imagePaths) {
   const imagePromises = imagePaths.map((path) => {
     console.log(`Loading "${path}" ...`);
@@ -309,6 +338,8 @@ const deckSwiper = new Swiper(".mySwiperDeck", {
 
 deckSwiper.on("slideChange", function () {
   sound.play("shuffling");
+  tooltip.hide("drag");
+  tooltip.show("hold", "zoomInUp", 2000);
 });
 
 /*** Events */
