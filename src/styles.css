@@ -10,11 +10,12 @@ body {
   position: relative;
   height: 100%;
   overflow: hidden;
+  background-color: black;
 }
 
 body {
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-family: system-ui, sans-serif;
+  font-size: 1em;
   color: white;
   margin: 0;
   padding: 0;
@@ -41,7 +42,7 @@ ul {
   height: 130%;
   background-size: cover;
   background-position: center;
-  background-image: url(img/background-default.webp);
+  /* background-image: url(img/background-default.webp); */
   transition: all 4s;
 }
 

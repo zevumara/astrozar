@@ -38,6 +38,7 @@ gulp.task("watch", () => {
     port: 35729,
   });
   gulp.watch("src/index.html", gulp.series("minify-html"));
+  gulp.watch("src/test.html", gulp.series("minify-html"));
   gulp.watch("src/app.js", gulp.series("minify-js"));
   gulp.watch("src/styles.css", gulp.series("minify-css"));
 });
