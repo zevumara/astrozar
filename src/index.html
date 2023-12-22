@@ -9,6 +9,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.min.css" />
   </head>
   <body>
@@ -58,7 +64,6 @@
           <div class="container">
             <div class="tooltip hide" id="tooltip-slots">
               <div class="content">
-                <p class="hint">Astrozar</p>
                 <p>
                   Presioná sobre alguna de las <strong>tres ranuras</strong> para colocar una carta.
                 </p>
@@ -66,13 +71,46 @@
             </div>
             <div class="tooltip hide" id="tooltip-complete">
               <div class="content">
-                <p class="hint">Astrozar</p>
                 <p>Repetí la acción hasta seleccionar las <strong>tres cartas</strong>.</p>
               </div>
             </div>
-            <div class="slot triangle pulse"></div>
-            <div class="slot circle pulse"></div>
-            <div class="slot square pulse"></div>
+            <div class="card front triangle">
+              <div class="inner">
+                <p class="number">2</p>
+                <div class="artwork"></div>
+                <div class="symbol"></div>
+              </div>
+            </div>
+            <div class="card front circle eight">
+              <div class="inner">
+                <span class="number">8</span>
+                <div class="artwork"></div>
+                <p class="text">DAGGER</p>
+              </div>
+            </div>
+            <div class="card front square">
+              <div class="inner">
+                <p class="number">5</p>
+                <div class="artwork"></div>
+                <div class="symbol"></div>
+              </div>
+            </div>
+            <style class="hover"></style>
+            <div class="slot triangle hide">
+              <div class="inner">
+                <div class="symbol"></div>
+              </div>
+            </div>
+            <div class="slot circle hide">
+              <div class="inner">
+                <div class="symbol"></div>
+              </div>
+            </div>
+            <div class="slot square hide">
+              <div class="inner">
+                <div class="symbol"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="swiper-slide">
@@ -99,8 +137,20 @@
     <div id="chosen" class="deck-wrapper hide">
       <div class="row"></div>
       <div class="row big">
-        <div id="card-back" class="card">Carta elegida</div>
-        <div id="card-front" class="card hide">Frontal</div>
+        <div id="card-back" class="card back">
+          <div class="wrap">
+            <div class="inner">
+              <div class="symbol"></div>
+            </div>
+          </div>
+        </div>
+        <div id="card-front" class="card front hide">
+          <div class="inner">
+            <span class="number">8</span>
+            <div class="artwork"></div>
+            <p class="text">DAGGER</p>
+          </div>
+        </div>
       </div>
       <div class="row medium"></div>
     </div>
@@ -109,7 +159,6 @@
         <button id="btnBack">Go back</button>
         <div class="tooltip hide" id="tooltip-drag">
           <div class="content">
-            <p class="hint">Astrozar</p>
             <p>
               Arrastrá las cartas hacia la izquierda o hacia la derecha hasta elegir una.
               <strong>Guiate por tu intuición.</strong>
@@ -120,16 +169,76 @@
       <div class="row big">
         <div class="swiper-deck mySwiperDeck">
           <div class="swiper-wrapper">
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
-            <div class="swiper-slide card"></div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide card back">
+              <div class="wrap">
+                <div class="inner">
+                  <div class="symbol"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -139,7 +248,6 @@
         </button>
         <div class="tooltip hide" id="tooltip-hold">
           <div class="content">
-            <p class="hint">Astrozar</p>
             <p>Una vez elegida, mantené presionado el botón de abajo por varios segundos.</p>
           </div>
         </div>

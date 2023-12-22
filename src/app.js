@@ -75,6 +75,10 @@ function showDeck(deck) {
   sound.play("open");
   user.target = deck;
   $("#btnChoose").disabled = false;
+  $("#deck").classList.remove("triangle");
+  $("#deck").classList.remove("square");
+  $("#deck").classList.remove("circle");
+  $("#deck").classList.add(deck);
   $("#deck").classList.add("appear");
   tooltip.hide("slots");
   tooltip.show("drag");
@@ -95,6 +99,10 @@ async function chooseCard() {
   user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
   save(3);
   $("#deck").classList.remove("appear");
+  $("#card-front").classList.remove("triangle");
+  $("#card-front").classList.remove("circle");
+  $("#card-front").classList.remove("square");
+  $("#card-front").classList.add(user.target);
   $("#chosen").classList.remove("hide");
   // Animation when choosing the card
   await animate("#card-back", "wobble");
@@ -463,3 +471,72 @@ window.addEventListener("load", async () => {
     restore();
   }
 });
+
+let x;
+const cards = document.querySelectorAll("#slots .card.front");
+const style = document.querySelector(".hover");
+
+cards.forEach((card) => {
+  card.addEventListener("mousemove", handleMove);
+  card.addEventListener("touchmove", handleMove);
+  card.addEventListener("mouseout", handleEnd);
+  card.addEventListener("touchend", handleEnd);
+  card.addEventListener("touchcancel", handleEnd);
+});
+
+function handleMove(e) {
+  // normalise touch/mouse
+  let pos = [e.offsetX, e.offsetY];
+  e.preventDefault();
+  if (e.type === "touchmove") {
+    pos = [e.touches[0].clientX, e.touches[0].clientY];
+  }
+  const card = this;
+  // math for mouse position
+  const l = pos[0];
+  const t = pos[1];
+  const h = card.offsetHeight;
+  const w = card.offsetWidth;
+  const px = Math.abs(Math.floor((100 / w) * l) - 100);
+  const py = Math.abs(Math.floor((100 / h) * t) - 100);
+  const pa = 50 - px + (50 - py);
+  // math for gradient / background positions
+  const lp = 50 + (px - 50) / 1.5;
+  const tp = 50 + (py - 50) / 1.5;
+  const px_spark = 50 + (px - 50) / 7;
+  const py_spark = 50 + (py - 50) / 7;
+  const p_opc = 20 + Math.abs(pa) * 1.5;
+  const ty = ((tp - 50) / 2) * -1;
+  const tx = ((lp - 50) / 1.5) * 0.5;
+  // css to apply for active card
+  const grad_pos = `background-position: ${lp}% ${tp}%;`;
+  const sprk_pos = `background-position: ${px_spark}% ${py_spark}%;`;
+  const opc = `opacity: ${p_opc / 100};`;
+  const tf = `transform: rotateX(${ty}deg) rotateY(${tx}deg)`;
+  // need to use a <style> tag for pseudo-elements
+  console.log(grad_pos);
+  const styleText = `.card.front:hover:before { ${grad_pos} }  /* gradient */ 
+          .card.front:hover:after { ${sprk_pos} ${opc} }   /* sparkles */`;
+  // set / apply css class and style
+  cards.forEach(function (c) {
+    c.classList.remove("active");
+    c.classList.remove("animated");
+    c.removeAttribute("style");
+  });
+  card.classList.remove("animated");
+  card.setAttribute("style", tf);
+  style.innerHTML = styleText;
+  if (e.type === "touchmove") {
+    return false;
+  }
+  clearTimeout(x);
+}
+function handleEnd() {
+  // remove css, apply custom animation on end
+  const card = this;
+  style.innerHTML = "";
+  card.removeAttribute("style");
+  x = setTimeout(function () {
+    card.classList.add("animated");
+  }, 2500);
+}
