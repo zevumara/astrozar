@@ -192,14 +192,11 @@ ul {
   border-radius: 0.25cm;
   background-color: rgb(55, 55, 55);
   aspect-ratio: 7 / 12;
-  text-align: center;
-  font-size: 0.7cm;
-  line-height: 0.6cm;
   position: relative;
-  touch-action: none;
-  transition: all 0.3s ease;
-  box-shadow: -10px -10px 20px -15px var(--color1), 10px 10px 20px -15px var(--color2),
-    1px 1px 1px 1px var(--color2), 0 0 3px 4px rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  transform-origin: center;
+  padding: 0.6cm 0.6cm 0.8cm 0.6cm;
+  text-align: center;
   cursor: pointer;
 }
 .slot:hover {
@@ -236,23 +233,6 @@ ul {
 }
 .slot:hover .symbol {
   opacity: 0.3;
-}
-
-.slot.done {
-  cursor: default;
-  border-color: red;
-  opacity: 1;
-  background-color: red;
-  cursor: none;
-}
-
-.slot .glow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  background-image: radial-gradient(circle at 50% -20%, #ffffff22, #0000000f);
 }
 
 .deck-wrapper {
@@ -516,8 +496,13 @@ ul {
   background-repeat: no-repeat;
   background-position: center;
 }
-.card.front.circle.eight .artwork {
+.card.front .artwork {
   background-image: url(img/dagger.webp);
+}
+.card.front.triangle .text,
+.card.front.square .text,
+.card.front.circle .symbol {
+  display: none;
 }
 
 .card.back {
@@ -605,6 +590,7 @@ ul {
   background-color: var(--color2);
   opacity: 0.1;
 }
+.card.back.triangle .symbol,
 .triangle .card.back .symbol {
   width: 0;
   height: 0;
@@ -613,6 +599,7 @@ ul {
   border-bottom: 2.5cm solid var(--color2);
   background: none;
 }
+.card.back.circle .symbol,
 .circle .card.back .symbol {
   border-radius: 2.5cm;
 }
@@ -1073,30 +1060,17 @@ textarea {
 }
 
 /*** Media queries ***/
-
-/* @media (min-width: 821px) {
-  #slots .container {
-    flex-direction: row;
-  }
-  .slot {
-    aspect-ratio: 9 / 16;
-    width: 80vw;
-    height: auto;
-    max-width: 240px;
-    max-height: 360px;
-  }
-} */
 @media (max-height: 12cm) {
+  .card,
   .slot {
     width: auto;
     height: 100%;
-    font-size: 5vh;
   }
 }
 @media (max-width: 23cm) {
+  .card,
   .slot {
     width: 100%;
     height: auto;
-    font-size: 2.8vw;
   }
 }

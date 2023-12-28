@@ -5,19 +5,13 @@ function $(selector) {
 function restore() {
   $("#query").value = user.query;
   if (typeof user.circle === "number") {
-    $(".slot.circle").classList.remove("pulse");
     $(".slot.circle").classList.add("done");
-    $(".slot.circle").classList.add("float");
   }
   if (typeof user.square === "number") {
-    $(".slot.square").classList.remove("pulse");
     $(".slot.square").classList.add("done");
-    $(".slot.square").classList.add("float");
   }
   if (typeof user.triangle === "number") {
-    $(".slot.triangle").classList.remove("pulse");
     $(".slot.triangle").classList.add("done");
-    $(".slot.triangle").classList.add("float");
   }
   swiper.allowSlideNext = true;
   swiper.slideTo(user.slide, 1000);
@@ -99,11 +93,22 @@ async function chooseCard() {
   user[user.target] = user.decks[user.target][deckSwiper.activeIndex];
   save(3);
   $("#deck").classList.remove("appear");
+  $("#card-back").classList.remove("triangle");
+  $("#card-back").classList.remove("circle");
+  $("#card-back").classList.remove("square");
+  $("#card-back").classList.add(user.target);
+  // Setup card
   $("#card-front").classList.remove("triangle");
   $("#card-front").classList.remove("circle");
   $("#card-front").classList.remove("square");
   $("#card-front").classList.add(user.target);
-  $("#chosen").classList.remove("hide");
+  $("#card-front .number").innerText = user[user.target];
+  console.log("Number:", user[user.target]);
+  if (user.target === "circle") {
+    $("#card-front .text").innerText = names[user[user.target]];
+    console.log("Name:", names[user[user.target]]);
+  }
+  $("#chosen").classList.remove("animate__animated", "animate__fadeOut", "hide");
   // Animation when choosing the card
   await animate("#card-back", "wobble");
   await animate("#card-back", "flipOutY");
@@ -113,14 +118,26 @@ async function chooseCard() {
   await animate("#card-front", "flipInY");
   await animate("#card-front", "zoomOutUp");
   $("#card-front").classList.add("hide");
-  $(`.slot.${[user.target]}`).classList.remove("pulse");
-  $(`.slot.${[user.target]}`).classList.add("done");
-  $(`.slot.${[user.target]}`).classList.add("float");
-  tooltip.show("complete", "zoomInUp");
-  await animate("#chosen", "fadeOut");
-  $("#chosen").classList.add("hide");
+  // Setup card
+  $(`#slot-${[user.target]}`).classList.remove("slot");
+  $(`#slot-${[user.target]}`).classList.add("card", "front");
   $("#card-back").classList.remove("hide");
   $("#btnChoose").disabled = false;
+  $(`#slot-${[user.target]} .number`).innerText = user[user.target];
+  if (user.target === "circle") {
+    $(`#slot-${[user.target]} .text`).innerText = names[user[user.target]];
+  }
+  $(`#slot-${[user.target]}`).classList.add("done");
+  // Card effect
+  $(`#slot-${[user.target]}`).addEventListener("mousemove", handleMove);
+  $(`#slot-${[user.target]}`).addEventListener("touchmove", handleMove);
+  $(`#slot-${[user.target]}`).addEventListener("mouseout", handleEnd);
+  $(`#slot-${[user.target]}`).addEventListener("touchend", handleEnd);
+  $(`#slot-${[user.target]}`).addEventListener("touchcancel", handleEnd);
+  // Tooltip
+  tooltip.show("complete", "zoomInUp");
+  $("#chosen").classList.add("hide");
+  await animate("#chosen", "fadeOut");
   // The three cards were choosen
   if (
     typeof user.triangle === "number" &&
@@ -310,6 +327,19 @@ const defaultUser = {
   id: null,
 };
 
+const names = [
+  "Mirror",
+  "Rainbow",
+  "Eye",
+  "Staff",
+  "Void",
+  "Dodecahedron",
+  "Dagger",
+  "Plant",
+  "Heart",
+  "Gem",
+];
+
 let user = JSON.parse(localStorage.getItem("user")) || defaultUser;
 
 const swiper = new Swiper(".mySwiper", {
@@ -361,13 +391,11 @@ $("textarea").oninput = (e) => {
     user.query = e.target.value;
     if ($("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.remove("disabled");
-      $("#btnDraw").classList.add("pulse");
     }
   } else {
     user.query = null;
     if (!$("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.add("disabled");
-      $("#btnDraw").classList.remove("pulse");
     }
   }
 };
@@ -476,13 +504,13 @@ let x;
 const cards = document.querySelectorAll("#slots .card.front");
 const style = document.querySelector(".hover");
 
-cards.forEach((card) => {
-  card.addEventListener("mousemove", handleMove);
-  card.addEventListener("touchmove", handleMove);
-  card.addEventListener("mouseout", handleEnd);
-  card.addEventListener("touchend", handleEnd);
-  card.addEventListener("touchcancel", handleEnd);
-});
+// cards.forEach((card) => {
+//   card.addEventListener("mousemove", handleMove);
+//   card.addEventListener("touchmove", handleMove);
+//   card.addEventListener("mouseout", handleEnd);
+//   card.addEventListener("touchend", handleEnd);
+//   card.addEventListener("touchcancel", handleEnd);
+// });
 
 function handleMove(e) {
   // normalise touch/mouse
