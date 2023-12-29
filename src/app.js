@@ -5,13 +5,13 @@ function $(selector) {
 function restore() {
   $("#query").value = user.query;
   if (typeof user.circle === "number") {
-    $(".slot.circle").classList.add("done");
+    setupCard("circle");
   }
   if (typeof user.square === "number") {
-    $(".slot.square").classList.add("done");
+    setupCard("square");
   }
   if (typeof user.triangle === "number") {
-    $(".slot.triangle").classList.add("done");
+    setupCard("triangle");
   }
   swiper.allowSlideNext = true;
   swiper.slideTo(user.slide, 1000);
@@ -103,10 +103,8 @@ async function chooseCard() {
   $("#card-front").classList.remove("square");
   $("#card-front").classList.add(user.target);
   $("#card-front .number").innerText = user[user.target];
-  console.log("Number:", user[user.target]);
   if (user.target === "circle") {
     $("#card-front .text").innerText = names[user[user.target]];
-    console.log("Name:", names[user[user.target]]);
   }
   $("#chosen").classList.remove("animate__animated", "animate__fadeOut", "hide");
   // Animation when choosing the card
@@ -119,21 +117,7 @@ async function chooseCard() {
   await animate("#card-front", "zoomOutUp");
   $("#card-front").classList.add("hide");
   // Setup card
-  $(`#slot-${[user.target]}`).classList.remove("slot");
-  $(`#slot-${[user.target]}`).classList.add("card", "front");
-  $("#card-back").classList.remove("hide");
-  $("#btnChoose").disabled = false;
-  $(`#slot-${[user.target]} .number`).innerText = user[user.target];
-  if (user.target === "circle") {
-    $(`#slot-${[user.target]} .text`).innerText = names[user[user.target]];
-  }
-  $(`#slot-${[user.target]}`).classList.add("done");
-  // Card effect
-  $(`#slot-${[user.target]}`).addEventListener("mousemove", handleMove);
-  $(`#slot-${[user.target]}`).addEventListener("touchmove", handleMove);
-  $(`#slot-${[user.target]}`).addEventListener("mouseout", handleEnd);
-  $(`#slot-${[user.target]}`).addEventListener("touchend", handleEnd);
-  $(`#slot-${[user.target]}`).addEventListener("touchcancel", handleEnd);
+  setupCard(user.target);
   // Tooltip
   tooltip.show("complete", "zoomInUp");
   $("#chosen").classList.add("hide");
@@ -147,6 +131,25 @@ async function chooseCard() {
     sound.play("alea-iacta-est");
     aleaIactaEst();
   }
+}
+
+function setupCard(type) {
+  // Fill slot
+  $(`#slot-${type}`).classList.remove("slot");
+  $(`#slot-${type}`).classList.add("card", "front");
+  $("#card-back").classList.remove("hide");
+  $("#btnChoose").disabled = false;
+  $(`#slot-${type} .number`).innerText = user[type];
+  if (type === "circle") {
+    $(`#slot-${type} .text`).innerText = names[user[type]];
+  }
+  $(`#slot-${type}`).classList.add("done");
+  // Card effect
+  $(`#slot-${type}`).addEventListener("mousemove", handleMove);
+  $(`#slot-${type}`).addEventListener("touchmove", handleMove);
+  $(`#slot-${type}`).addEventListener("mouseout", handleEnd);
+  $(`#slot-${type}`).addEventListener("touchend", handleEnd);
+  $(`#slot-${type}`).addEventListener("touchcancel", handleEnd);
 }
 
 function nextSlide() {
