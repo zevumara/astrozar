@@ -65,7 +65,7 @@ app.get("/s/:id", async (req, res) => {
 app.post(
   "/q",
   [
-    body("q").isString().isLength({ min: 20, max: 255 }),
+    body("q").isString().isLength({ min: 15, max: 76 }),
     body("c").isInt({ min: 0, max: 10 }),
     body("t").isInt({ min: 0, max: 10 }),
     body("s").isInt({ min: 0, max: 10 }),

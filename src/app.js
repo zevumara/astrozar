@@ -2,6 +2,13 @@ function $(selector) {
   return document.querySelector(selector);
 }
 
+function getRandomNumber() {
+  const number = self.crypto.getRandomValues(new Uint32Array(1)).toString();
+  const index = Math.floor(Math.random() * number.length);
+  const randomNumber = parseInt(number.charAt(index), 10);
+  return randomNumber;
+}
+
 function restore() {
   $("#query").value = user.query;
   if (typeof user.circle === "number") {
@@ -39,6 +46,9 @@ function save(slide) {
 
 function drawYourCards() {
   if (!user.query) return;
+  setupSlot("triangle");
+  setupSlot("circle");
+  setupSlot("square");
   const delay = localStorage.getItem("shuffling-cards") ? 1500 : 3000;
   setTimeout(() => {
     nextSlide();
@@ -57,7 +67,8 @@ function generateDeck() {
   for (let i = 0; i < 10; i++) {
     let cardIndex;
     do {
-      cardIndex = Math.floor(Math.random() * 10);
+      // cardIndex = Math.floor(Math.random() * 10);
+      cardIndex = getRandomNumber();
     } while (deck.includes(cardIndex));
     deck.push(cardIndex);
   }
@@ -68,7 +79,7 @@ function showDeck(deck) {
   if (user[deck] !== null) return;
   sound.play("open");
   user.target = deck;
-  $("#btnChoose").disabled = false;
+  // $("#btnChoose").disabled = false;
   $("#deck").classList.remove("triangle");
   $("#deck").classList.remove("square");
   $("#deck").classList.remove("circle");
@@ -84,9 +95,11 @@ function showDeck(deck) {
 
 async function chooseCard() {
   if (!user.target) return;
+  user.holding = false;
+  $("#hold").classList.add("hide");
   tooltip.hide("hold");
   sound.play("chosen", true);
-  $("#btnChoose").disabled = true;
+  // $("#btnChoose").disabled = true;
   user.decks.circle = generateDeck();
   user.decks.square = generateDeck();
   user.decks.triangle = generateDeck();
@@ -120,8 +133,9 @@ async function chooseCard() {
   setupCard(user.target);
   // Tooltip
   tooltip.show("complete", "zoomInUp");
+  localStorage.setItem("tooltip-complete", 1);
   $("#chosen").classList.add("hide");
-  await animate("#chosen", "fadeOut");
+  // await animate("#chosen", "fadeOut");
   // The three cards were choosen
   if (
     typeof user.triangle === "number" &&
@@ -138,7 +152,7 @@ function setupCard(type) {
   $(`#slot-${type}`).classList.remove("slot");
   $(`#slot-${type}`).classList.add("card", "front");
   $("#card-back").classList.remove("hide");
-  $("#btnChoose").disabled = false;
+  // $("#btnChoose").disabled = false;
   $(`#slot-${type} .number`).innerText = user[type];
   if (type === "circle") {
     $(`#slot-${type} .text`).innerText = names[user[type]];
@@ -152,6 +166,24 @@ function setupCard(type) {
   $(`#slot-${type}`).addEventListener("touchcancel", handleEnd);
 }
 
+function setupSlot(type) {
+  // Fill slot
+  $(`#slot-${type}`).classList.remove("done");
+  $(`#slot-${type}`).classList.remove("card");
+  $(`#slot-${type}`).classList.remove("front");
+  $(`#slot-${type}`).classList.add("slot");
+  $(`#slot-${type} .number`).innerText = "";
+  if (type === "circle") {
+    $(`#slot-${type} .text`).innerText = "";
+  }
+  // Card effect
+  $(`#slot-${type}`).removeEventListener("mousemove", handleMove);
+  $(`#slot-${type}`).removeEventListener("touchmove", handleMove);
+  $(`#slot-${type}`).removeEventListener("mouseout", handleEnd);
+  $(`#slot-${type}`).removeEventListener("touchend", handleEnd);
+  $(`#slot-${type}`).removeEventListener("touchcancel", handleEnd);
+}
+
 function nextSlide() {
   swiper.allowSlideNext = true;
   swiper.slideNext(600);
@@ -160,19 +192,38 @@ function nextSlide() {
 
 function showAnswer() {
   if (!user.query || !user.answer) return;
-  $(".query").innerText = user.query;
-  $(".answer").innerText = user.answer;
+  $("#answer .query").innerText = user.query;
+  $("#answer .answer").innerText = user.answer;
+  $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
   $("#btnShare").href = `http://localhost:3000/s/${user.id}`;
   localStorage.removeItem("user");
-  user = defaultUser;
+  user = { ...defaultUser };
   swiper.allowSlideNext = true;
   swiper.slideNext(1400);
   swiper.allowSlideNext = false;
 }
 
 function aleaIactaEst() {
-  tooltip.hide("complete", "zoomInUp");
+  setTimeout(() => {
+    tooltip.hide("complete");
+  }, 2300);
   $("#background").classList.add("universe");
+  if (user.debug) {
+    setTimeout(() => {
+      user.id = 12345;
+      user.answer =
+        "Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente.";
+      save(5);
+      swiper.allowSlideNext = true;
+      swiper.slideNext(1400);
+      swiper.allowSlideNext = false;
+      setTimeout(() => {
+        sound.play("the-answer");
+      }, 6500);
+      setTimeout(showAnswer, 7000);
+    }, 3200);
+    return;
+  }
   setTimeout(async () => {
     const response = await fetch("http://localhost:3000/q", {
       method: "POST",
@@ -323,11 +374,13 @@ const defaultUser = {
   query: null,
   target: null,
   timer: null,
+  hodling: false,
   triangle: null,
   square: null,
   circle: null,
   slide: 0,
   id: null,
+  debug: 1,
 };
 
 const names = [
@@ -343,7 +396,7 @@ const names = [
   "Gem",
 ];
 
-let user = JSON.parse(localStorage.getItem("user")) || defaultUser;
+let user = JSON.parse(localStorage.getItem("user")) || { ...defaultUser };
 
 const swiper = new Swiper(".mySwiper", {
   speed: 600,
@@ -357,7 +410,7 @@ const swiper = new Swiper(".mySwiper", {
 
 const deckSwiper = new Swiper(".mySwiperDeck", {
   effect: "cards",
-  grabCursor: true,
+  grabCursor: false,
   mousewheel: true,
   enabled: false,
   keyboard: true,
@@ -375,6 +428,7 @@ deckSwiper.on("slideChange", function () {
 $("#btnAsk").onclick = (e) => {
   e.preventDefault();
   $("#background").classList.add("universe");
+  $("#query").focus();
   nextSlide();
 };
 
@@ -382,7 +436,7 @@ $("textarea").onkeydown = (e) => {
   if (e.keyCode === 13) {
     e.preventDefault();
     const characters = e.target.value.length;
-    if (characters > 20 && characters < 255) {
+    if (characters > 15 && characters < 76) {
       drawYourCards();
     }
   }
@@ -390,15 +444,17 @@ $("textarea").onkeydown = (e) => {
 
 $("textarea").oninput = (e) => {
   const characters = e.target.value.length;
-  if (characters > 20 && characters < 255) {
+  if (characters > 15 && characters < 76) {
     user.query = e.target.value;
     if ($("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.remove("disabled");
+      $("#btnDraw").classList.add("pulse");
     }
   } else {
     user.query = null;
     if (!$("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.add("disabled");
+      $("#btnDraw").classList.remove("pulse");
     }
   }
 };
@@ -407,6 +463,34 @@ $("#btnDraw").onclick = (e) => {
   e.preventDefault();
   drawYourCards();
 };
+
+$(".mySwiperDeck").onpointerdown = () => {
+  $(".mySwiperDeck").style.cursor = "grabbing";
+  $("#hold .progress").classList.remove("animate");
+  user.timer = setTimeout(initHold, 600);
+};
+
+document.body.onpointerup = () => {
+  $(".mySwiperDeck").style.cursor = "grab";
+  clearTimeout(user.timer);
+  if (user.holding) {
+    sound.stop();
+    $("#hold").classList.add("hide");
+    user.holding = false;
+  }
+};
+
+function initHold() {
+  if (!user.hodling) {
+    sound.play("holding");
+    $("#hold").classList.remove("hide");
+    setTimeout(() => {
+      $("#hold .progress").classList.add("animate");
+    }, 100);
+    user.timer = setTimeout(chooseCard, 1200);
+    user.holding = true;
+  }
+}
 
 $("#btnShare").onclick = (e) => {
   e.preventDefault();
@@ -422,21 +506,31 @@ $("#btnShare").onclick = (e) => {
 
 $("#btnAskMeAgain").onclick = (e) => {
   e.preventDefault();
+  $("#query").value = "";
+  $("#query").focus();
+  $("#btnDraw").classList.add("disabled");
+  $("#btnDraw").classList.remove("pulse");
   swiper.allowSlidePrev = true;
   swiper.slideTo(1, 1000);
   swiper.allowSlidePrev = false;
 };
 
-$(".slot.triangle").onclick = () => {
-  showDeck("triangle");
+$("#slot-triangle").onclick = (event) => {
+  if (!event.target.classList.contains("done")) {
+    showDeck("triangle");
+  }
 };
 
-$(".slot.circle").onclick = () => {
-  showDeck("circle");
+$("#slot-circle").onclick = (event) => {
+  if (!event.target.classList.contains("done")) {
+    showDeck("circle");
+  }
 };
 
-$(".slot.square").onclick = () => {
-  showDeck("square");
+$("#slot-square").onclick = (event) => {
+  if (!event.target.classList.contains("done")) {
+    showDeck("square");
+  }
 };
 
 $(".slot.triangle").onmouseenter = (e) => {
@@ -461,24 +555,6 @@ $("#btnBack").onclick = () => {
   sound.play("close");
   $("#deck").classList.remove("appear");
   deckSwiper.disable();
-};
-
-$("#btnChoose").onmousedown = () => {
-  sound.play("holding");
-  user.timer = setTimeout(chooseCard, 1200);
-};
-
-$("#btnChoose").onmouseup = () => {
-  sound.stop();
-  clearTimeout(user.timer);
-};
-
-$("#btnChoose").ontouchstart = () => {
-  user.timer = setTimeout(chooseCard, 1200);
-};
-
-$("#btnChoose").ontouchend = () => {
-  clearTimeout(user.timer);
 };
 
 window.addEventListener("load", async () => {
@@ -506,14 +582,6 @@ window.addEventListener("load", async () => {
 let x;
 const cards = document.querySelectorAll("#slots .card.front");
 const style = document.querySelector(".hover");
-
-// cards.forEach((card) => {
-//   card.addEventListener("mousemove", handleMove);
-//   card.addEventListener("touchmove", handleMove);
-//   card.addEventListener("mouseout", handleEnd);
-//   card.addEventListener("touchend", handleEnd);
-//   card.addEventListener("touchcancel", handleEnd);
-// });
 
 function handleMove(e) {
   // normalise touch/mouse
@@ -545,7 +613,6 @@ function handleMove(e) {
   const opc = `opacity: ${p_opc / 100};`;
   const tf = `transform: rotateX(${ty}deg) rotateY(${tx}deg)`;
   // need to use a <style> tag for pseudo-elements
-  console.log(grad_pos);
   const styleText = `.card.front:hover:before { ${grad_pos} }  /* gradient */ 
           .card.front:hover:after { ${sprk_pos} ${opc} }   /* sparkles */`;
   // set / apply css class and style
