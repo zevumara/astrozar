@@ -219,7 +219,7 @@ function aleaIactaEst() {
         sound.play("the-answer");
       }, 4000);
       setTimeout(showAnswer, 4500);
-    }, 5700);
+    }, 5600);
     return;
   }
   setTimeout(async () => {
@@ -245,12 +245,12 @@ function aleaIactaEst() {
       swiper.allowSlideNext = false;
       setTimeout(() => {
         sound.play("the-answer");
-      }, 6500);
-      setTimeout(showAnswer, 7000);
+      }, 4000);
+      setTimeout(showAnswer, 4500);
     } else {
       console.error("Error:", response.status);
     }
-  }, 3200);
+  }, 5600);
 }
 
 function animate(element, animation, prefix = "animate__") {
@@ -294,7 +294,7 @@ const sound = {
       this.playing.currentTime = 0;
     }
   },
-  play: function (file, overlay = false) {
+  play: function (file, overlay = false, volume = 1) {
     if (!this.context) {
       this.context = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -310,8 +310,10 @@ const sound = {
         audioInstance.addEventListener("ended", function () {
           this.remove();
         });
+        audioInstance.volume = volume;
         audioInstance.play();
       } else {
+        sfx.volume = volume;
         sfx.play();
       }
     } else {
@@ -565,6 +567,7 @@ window.addEventListener("load", async () => {
     "holding",
     "shuffling",
     "slot-hover",
+    "test",
   ]);
   await image.load([
     "background-stars",
@@ -582,6 +585,7 @@ window.addEventListener("load", async () => {
     restore();
     console.log(user.slide);
   }
+  sound.play("test", true, 0.1);
 });
 
 let x;
