@@ -38,9 +38,10 @@
         <div class="layer"></div>
         <div class="layer"></div>
       </div>
-      <div id="welcome" class="swiper-wrapper">
-        <div class="swiper-slide">
-          <div class="container inner">
+      <div class="swiper-wrapper">
+        <div id="welcome" class="swiper-slide">
+          <div class="astrozar"><div class="picture float"></div></div>
+          <div class="dialog container">
             <h1>Welcome, soul.</h1>
             <h2>
               <span>I am Astrozar, a steward of the stars</span>. My purpose is to serve as a
@@ -50,22 +51,22 @@
             <a href="#" id="btnAsk" class="button pulse">Ask me anything Λ</a>
           </div>
         </div>
-        <div class="swiper-slide">
+        <div id="concern" class="swiper-slide">
           <div class="container">
             <h2>What is your concern?</h2>
             <textarea autofocus id="query" name="q" placeholder="Type here."></textarea>
             <a href="#" id="btnDraw" class="button disabled">Draw your cards</a>
           </div>
         </div>
-        <div class="swiper-slide">
+        <div id="shuffling-cards" class="swiper-slide wait">
           <div class="container">
-            <h1 class="blink">
+            <p class="blink">
               Shuffling cards... <br />
               Choose wisely.
-            </h1>
+            </p>
           </div>
         </div>
-        <div class="swiper-slide" id="slots">
+        <div id="slots" class="swiper-slide">
           <div class="container">
             <div class="tooltip hide" id="tooltip-slots">
               <div class="content">
@@ -104,18 +105,18 @@
             <style class="hover"></style>
           </div>
         </div>
-        <div class="swiper-slide">
+        <div id="universe-responding" class="swiper-slide wait">
           <div class="container">
-            <h1 class="blink">The universe is responding...</h1>
+            <p class="blink">The universe is responding...</p>
           </div>
         </div>
         <div id="answer" class="swiper-slide">
           <div class="container inner">
-            <h2 class="query"></h2>
-            <h1 class="answer"></h1>
+            <p class="query"></p>
+            <p class="answer">“<span></span>”</p>
             <div class="number">
-              <p>Your number is:</p>
-              <h2></h2>
+              <p>Your number is</p>
+              <h2>7 7 7</h2>
             </div>
             <ul>
               <li id="btnShare">☍</li>

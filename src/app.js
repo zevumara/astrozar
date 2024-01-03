@@ -193,9 +193,9 @@ function nextSlide() {
 function showAnswer() {
   if (!user.query || !user.answer) return;
   $("#answer .query").innerText = user.query;
-  $("#answer .answer").innerText = user.answer;
+  $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
-  $("#btnShare").href = `http://localhost:3000/s/${user.id}`;
+  $("#btnShare").href = `s/${user.id}`;
   localStorage.removeItem("user");
   user = { ...defaultUser };
   swiper.allowSlideNext = true;
@@ -206,22 +206,20 @@ function showAnswer() {
 function aleaIactaEst() {
   setTimeout(() => {
     tooltip.hide("complete");
-  }, 2300);
-  $("#background").classList.add("universe");
+  }, 2100);
   if (user.debug) {
     setTimeout(() => {
       user.id = 12345;
-      user.answer =
-        "Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente.";
+      user.answer = `Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente. Lo estoy tendiendo para ver hasta donde puede llegar. La idea es llegar a unas cuarenta palabras aproximado.`;
       save(5);
       swiper.allowSlideNext = true;
       swiper.slideNext(1400);
       swiper.allowSlideNext = false;
       setTimeout(() => {
         sound.play("the-answer");
-      }, 6500);
-      setTimeout(showAnswer, 7000);
-    }, 3200);
+      }, 4000);
+      setTimeout(showAnswer, 4500);
+    }, 5700);
     return;
   }
   setTimeout(async () => {
@@ -400,7 +398,6 @@ let user = JSON.parse(localStorage.getItem("user")) || { ...defaultUser };
 
 const swiper = new Swiper(".mySwiper", {
   speed: 600,
-  parallax: true,
   allowSlideNext: false,
   allowSlidePrev: false,
   autoHeight: true,
@@ -569,13 +566,21 @@ window.addEventListener("load", async () => {
     "shuffling",
     "slot-hover",
   ]);
-  await image.load(["background-default", "background-stars"]);
+  await image.load([
+    "background-stars",
+    "astrozar",
+    "bg-card",
+    "icon-grabbing",
+    "icon-move",
+    "icon-pointer",
+  ]);
   animate("#loader .icon", "backOutDown");
   animate(".curtain.left", "fadeOutLeft");
   await animate(".curtain.right", "fadeOutRight");
   $("#loader").classList.add("hide");
   if (user.slide) {
     restore();
+    console.log(user.slide);
   }
 });
 

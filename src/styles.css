@@ -12,6 +12,7 @@
   padding: 0;
   margin: 0;
   user-select: none;
+  font-weight: normal;
 }
 html,
 body {
@@ -30,6 +31,10 @@ body {
 
 ul {
   list-style: none;
+}
+
+h2 {
+  font-weight: bold;
 }
 
 .swiper {
@@ -56,8 +61,8 @@ ul {
 .universe {
   background: url(img/background-stars.webp) no-repeat;
   background-size: cover;
-  width: 130%;
-  height: 130%;
+  width: 100%;
+  height: 100%;
   position: fixed;
   top: 0;
   left: 0;
@@ -153,14 +158,59 @@ ul {
   padding: 0 10%;
 }
 
+#welcome .astrozar {
+  height: 50%;
+}
+#welcome .astrozar .picture {
+  background-image: url(img/astrozar.webp);
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 70cqh;
+  width: 100%;
+  height: 150%;
+}
+#welcome .dialog {
+  height: 50%;
+  position: relative;
+  font-size: 1.55cqw;
+  padding: 1cqw 22cqw;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+#welcome .dialog h1 {
+  font-weight: bold;
+  color: var(--color2);
+  background: linear-gradient(240deg, var(--color2) 12%, var(--color4) 55%, var(--color2) 95%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 1.8s linear infinite;
+}
+#welcome .dialog h2 {
+  font-weight: normal;
+  font-size: 2cqw;
+}
+#welcome .dialog span {
+  font-weight: bold;
+}
+#welcome .button {
+  margin-top: 2.5cqh;
+  margin-bottom: 2.5cqh;
+}
+
+.wait .container p {
+  font-size: 3.8cqw;
+  font-weight: bold;
+  text-shadow: 0px 0px 9px var(--color1);
+}
+
 .button {
   background: linear-gradient(150deg, var(--color4) 12%, var(--color2) 95%);
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.5);
   border-radius: 4px;
-  font-size: 5cqh;
+  font-size: 1.9cqw;
   font-weight: bold;
   color: white;
-  padding: 1cqw 2.4cqw 1.2cqw 2.4cqw;
+  padding: 0.8cqw 1.2cqw 1cqw 1.2cqw;
   user-select: none;
   text-align: center;
   text-decoration: none;
@@ -202,7 +252,7 @@ textarea {
   padding: 5.5cqw;
   border-radius: 20px;
   text-align: center;
-  font-size: 40px;
+  font-size: 3.1cqw;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.25);
   color: var(--color2);
@@ -789,23 +839,33 @@ textarea:focus {
 #hold .progress.animate {
   width: 100%;
 }
-
-#answer .number {
-  opacity: 0.95;
+#answer .query {
+  font-weight: bold;
+  font-size: 2cqw;
+  color: var(--color2);
+  text-shadow: 0px 0px 9px rgba(0, 0, 0, 0.5);
+}
+#answer .answer {
+  font-size: 2.8cqw;
+  text-shadow: 0px 0px 9px var(--color4);
 }
 #answer .number p {
   font-size: 1.3cqw;
-  margin-bottom: 6px;
+  opacity: 0.9;
 }
 #answer .number h2 {
+  color: var(--color2);
+  background: linear-gradient(240deg, var(--color2) 12%, var(--color4) 55%, var(--color2) 95%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 1.8s linear infinite;
   font-size: 4.2cqw;
   line-height: 4.6cqw;
-  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   padding: 1cqw 1.8cqw;
-  display: block;
+  text-shadow: 0px 0px 9px rgba(0, 0, 0, 0.5);
 }
-
 #answer ul {
   list-style: none;
   display: flex;
@@ -877,23 +937,19 @@ textarea:focus {
 
 @keyframes float {
   0% {
-    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
     transform: translateY(0px);
   }
   50% {
-    box-shadow: 0 45px 15px 0px rgba(0, 0, 0, 0.2);
-    transform: translateY(-40px);
+    transform: translateY(33px);
   }
   100% {
-    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
     transform: translateY(0px);
   }
 }
 
 .float {
-  box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
   transform: translateY(0px);
-  animation: float 6s ease-in-out infinite;
+  animation: float 7s ease-in-out infinite;
 }
 
 @keyframes stars-1 {
@@ -1061,6 +1117,11 @@ textarea:focus {
     transform: scale3d(1, 1, 1);
   }
 }
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
 
 .tooltip {
   position: absolute;
@@ -1098,12 +1159,15 @@ textarea:focus {
 .tooltip .content p {
   margin-bottom: 0.2em;
 }
+.tooltip .content strong {
+  font-weight: bold;
+}
 
 #tooltip-slots {
   top: 0;
 }
 #tooltip-slots .content {
-  background-image: url(img/icon-pointer.png);
+  background-image: url(img/icon-pointer.webp);
 }
 #tooltip-complete {
   bottom: 0;
@@ -1118,7 +1182,7 @@ textarea:focus {
   max-width: 29em;
 }
 #tooltip-drag .content {
-  background-image: url(img/icon-grabbing.png);
+  background-image: url(img/icon-grabbing.webp);
   padding-left: 70px;
 }
 #tooltip-hold {
@@ -1157,7 +1221,66 @@ textarea:focus {
     height: auto;
   }
 }
+@media (max-width: 1280px) {
+  #welcome .astrozar {
+    height: 45%;
+  }
+  #welcome .astrozar .picture {
+    background-size: 60cqh;
+  }
+  #welcome .dialog {
+    height: 55%;
+    font-size: 3.55cqh;
+    padding: 0 12cqh;
+  }
+  #welcome .dialog h2 {
+    font-size: 4cqh;
+  }
+  #welcome .button {
+    margin-top: 1.5cqh;
+    margin-bottom: 1.5cqh;
+  }
+  .button {
+    font-size: 3.5cqh;
+    padding: 0.8cqh 1.6cqh 1cqh 1.6cqh;
+  }
+  textarea {
+    height: 50%;
+    padding: 13.5cqh 5.5cqh 0 5.5cqh;
+    font-size: 6.1cqh;
+  }
+  .wait .container p {
+    font-size: 4.8cqh;
+  }
+}
+@media (max-width: 1033px) {
+  textarea {
+    font-size: 5.7cqh;
+  }
+  #answer .query {
+    font-size: 2.8cqh;
+    background: none;
+  }
+  #answer .answer {
+    font-size: 3.4cqh;
+  }
+  #answer .number p {
+    font-size: 2.3cqh;
+  }
+  #answer .number h2 {
+    font-size: 7.4cqh;
+    line-height: 6.6cqh;
+    padding: 2cqh 1.8cqh 0 1.8cqh;
+  }
+}
 @media (max-width: 882px) {
+  #welcome .dialog {
+    font-size: 3.55cqh;
+    padding: 0 8cqh;
+  }
+  #welcome .dialog h2 {
+    font-size: 3.4cqh;
+  }
   #slots {
     padding: 2.5%;
   }
@@ -1204,14 +1327,25 @@ textarea:focus {
     font-size: 3.5cqw;
   }
   textarea {
-    height: 50%;
-    padding: 11.5cqw 5.5cqw 0 5.5cqw;
-  }
-  .button {
-    font-size: 4.5cqh;
+    font-size: 4.9cqh;
   }
 }
-@media (max-width: 582px) {
+@media (max-width: 586px) {
+  #welcome .astrozar {
+    height: 40%;
+  }
+  #welcome .dialog {
+    height: 60%;
+    font-size: 2.6cqh;
+    padding: 0 2cqh;
+  }
+  #welcome .dialog h2 {
+    font-size: 3cqh;
+  }
+  #welcome .button {
+    margin-top: 1.5cqh;
+    margin-bottom: 1.5cqh;
+  }
   .container {
     font-size: 4.5cqw;
   }
@@ -1223,8 +1357,5 @@ textarea:focus {
 @media (max-width: 382px) {
   .container {
     font-size: 5.5cqw;
-  }
-  textarea {
-    padding: 11.5cqw 5.5cqw 0 5.5cqw;
   }
 }
