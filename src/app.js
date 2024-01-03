@@ -33,7 +33,6 @@ function restore() {
     typeof user.square === "number" &&
     typeof user.circle === "number"
   ) {
-    sound.play("alea-iacta-est");
     aleaIactaEst();
   }
 }
@@ -142,7 +141,6 @@ async function chooseCard() {
     typeof user.square === "number" &&
     typeof user.circle === "number"
   ) {
-    sound.play("alea-iacta-est");
     aleaIactaEst();
   }
 }
@@ -205,52 +203,63 @@ function showAnswer() {
 
 function aleaIactaEst() {
   setTimeout(() => {
-    tooltip.hide("complete");
-  }, 2100);
-  if (user.debug) {
+    sound.play("button", true);
+    $("#flash").classList.remove("hide");
     setTimeout(() => {
-      user.id = 12345;
-      user.answer = `Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente. Lo estoy tendiendo para ver hasta donde puede llegar. La idea es llegar a unas cuarenta palabras aproximado.`;
-      save(5);
-      swiper.allowSlideNext = true;
-      swiper.slideNext(1400);
-      swiper.allowSlideNext = false;
+      $("#flash").classList.add("hide");
+    }, 250);
+  }, 600);
+
+  setTimeout(() => {
+    sound.play("alea-iacta-est");
+    setTimeout(() => {
+      tooltip.hide("complete");
+    }, 2100);
+    if (user.debug) {
       setTimeout(() => {
-        sound.play("the-answer");
-      }, 4000);
-      setTimeout(showAnswer, 4500);
-    }, 5600);
-    return;
-  }
-  setTimeout(async () => {
-    const response = await fetch("http://localhost:3000/q", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        q: user.query,
-        c: user.circle,
-        t: user.triangle,
-        s: user.square,
-      }),
-    });
-    if (response.ok) {
-      const spread = await response.json();
-      user.id = spread.id;
-      user.answer = spread.answer;
-      save(5);
-      swiper.allowSlideNext = true;
-      swiper.slideNext(1400);
-      swiper.allowSlideNext = false;
-      setTimeout(() => {
-        sound.play("the-answer");
-      }, 4000);
-      setTimeout(showAnswer, 4500);
-    } else {
-      console.error("Error:", response.status);
+        user.id = 12345;
+        user.answer = `Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente. Lo estoy tendiendo para ver hasta donde puede llegar. La idea es llegar a unas cuarenta palabras aproximado.`;
+        save(5);
+        swiper.allowSlideNext = true;
+        swiper.slideNext(1400);
+        swiper.allowSlideNext = false;
+        setTimeout(() => {
+          sound.play("the-answer");
+        }, 4000);
+        setTimeout(showAnswer, 4600);
+      }, 4500);
+      return;
     }
-  }, 5600);
+    setTimeout(async () => {
+      const response = await fetch("http://localhost:3000/q", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          q: user.query,
+          c: user.circle,
+          t: user.triangle,
+          s: user.square,
+        }),
+      });
+      if (response.ok) {
+        const spread = await response.json();
+        user.id = spread.id;
+        user.answer = spread.answer;
+        save(5);
+        swiper.allowSlideNext = true;
+        swiper.slideNext(1400);
+        swiper.allowSlideNext = false;
+        setTimeout(() => {
+          sound.play("the-answer");
+        }, 4000);
+        setTimeout(showAnswer, 4600);
+      } else {
+        console.error("Error:", response.status);
+      }
+    }, 4500);
+  }, 2000);
 }
 
 function animate(element, animation, prefix = "animate__") {
@@ -426,9 +435,21 @@ deckSwiper.on("slideChange", function () {
 
 $("#btnAsk").onclick = (e) => {
   e.preventDefault();
-  $("#background").classList.add("universe");
-  $("#query").focus();
-  nextSlide();
+  if (!e.target.classList.contains("disabled")) {
+    sound.play("button", true);
+    setTimeout(() => {
+      e.target.classList.remove("pulse");
+      e.target.classList.add("disabled");
+      $("#flash").classList.remove("hide");
+      setTimeout(() => {
+        $("#flash").classList.add("hide");
+      }, 250);
+      setTimeout(() => {
+        $("#query").focus();
+        nextSlide();
+      }, 400);
+    }, 200);
+  }
 };
 
 $("textarea").onkeydown = (e) => {
@@ -436,13 +457,25 @@ $("textarea").onkeydown = (e) => {
     e.preventDefault();
     const characters = e.target.value.length;
     if (characters > 15 && characters < 76) {
-      drawYourCards();
+      sound.play("button", true);
+      setTimeout(() => {
+        $("#btnDraw").classList.remove("pulse");
+        $("#btnDraw").classList.add("disabled");
+        $("#flash").classList.remove("hide");
+        setTimeout(() => {
+          $("#flash").classList.add("hide");
+        }, 250);
+        setTimeout(() => {
+          drawYourCards();
+        }, 400);
+      }, 200);
     }
   }
 };
 
 $("textarea").oninput = (e) => {
   const characters = e.target.value.length;
+  sound.play("key", true);
   if (characters > 15 && characters < 76) {
     user.query = e.target.value;
     if ($("#btnDraw").classList.contains("disabled")) {
@@ -460,7 +493,20 @@ $("textarea").oninput = (e) => {
 
 $("#btnDraw").onclick = (e) => {
   e.preventDefault();
-  drawYourCards();
+  if (!e.target.classList.contains("disabled")) {
+    sound.play("button", true);
+    setTimeout(() => {
+      e.target.classList.remove("pulse");
+      e.target.classList.add("disabled");
+      $("#flash").classList.remove("hide");
+      setTimeout(() => {
+        $("#flash").classList.add("hide");
+      }, 250);
+      setTimeout(() => {
+        drawYourCards();
+      }, 400);
+    }, 200);
+  }
 };
 
 $(".mySwiperDeck").onpointerdown = () => {
@@ -550,6 +596,16 @@ $(".slot.square").onmouseenter = (e) => {
   }
 };
 
+const sfxHoverButtons = document.querySelectorAll(".sfx-hover");
+
+sfxHoverButtons.forEach((button) => {
+  button.onmouseenter = () => {
+    if (!button.classList.contains("disabled")) {
+      sound.play("input");
+    }
+  };
+});
+
 $("#btnBack").onclick = () => {
   sound.play("close");
   $("#deck").classList.remove("appear");
@@ -567,6 +623,9 @@ window.addEventListener("load", async () => {
     "holding",
     "shuffling",
     "slot-hover",
+    "button",
+    "input",
+    "key",
     "test",
   ]);
   await image.load([
