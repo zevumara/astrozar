@@ -1,3 +1,5 @@
+const url = "http://localhost:3000/";
+
 const defaultUser = {
   decks: {
     triangle: null,
@@ -30,8 +32,6 @@ const names = [
 ];
 
 let user = JSON.parse(localStorage.getItem("user")) || { ...defaultUser };
-
-const url = user.debug ? "http://localhost:3000/" : "https://astrozar.vercel.app/";
 
 const swiper = new Swiper("main", {
   speed: 600,
@@ -242,7 +242,7 @@ function showAnswer() {
   $("#answer .query").innerText = user.query;
   $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
-  $("#btnShare").href = `${url}s/${user.id}`;
+  $("#btnShare").href = `${url}cosmos/share/${user.id}`;
   localStorage.removeItem("user");
   user = { ...defaultUser };
   swiper.allowSlideNext = true;
@@ -272,7 +272,7 @@ async function aleaIactaEst() {
     end = performance.now();
     delay = delay - (end - start);
   } else {
-    const response = await fetch(`${url}q`, {
+    const response = await fetch(`${url}cosmos/query`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

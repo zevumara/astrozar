@@ -1,14 +1,26 @@
 {
   "builds": [
     {
-      "src": "./index.js",
+      "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/"
+      "src": "/",
+      "dest": "public/index.html"
+    },
+    {
+      "src": "/(.+)",
+      "dest": "public/$1"
+    },
+    {
+      "src": "/cosmos/(.*)",
+      "dest": "server.js"
     }
   ]
 }

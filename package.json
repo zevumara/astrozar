@@ -2,13 +2,13 @@
   "name": "astrozar",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "start": "nodemon index.js",
-    "dev": "concurrently \"nodemon index.js\" \"gulp watch\""
+    "start": "nodemon server.js",
+    "dev": "concurrently \"nodemon server.js\" \"gulp watch\""
   },
   "author": "",
   "license": "ISC",

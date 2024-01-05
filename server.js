@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 const mongoose = require("mongoose");
 const parser = require("body-parser");
@@ -49,7 +49,7 @@ const openai = new OpenAI({
   apiKey: process.env.API_KEY,
 });
 
-app.get("/s/:id", async (req, res) => {
+app.get("/cosmos/share/:id", async (req, res) => {
   try {
     const data = await Spread.findById(req.params.id);
     if (data) {
@@ -63,7 +63,7 @@ app.get("/s/:id", async (req, res) => {
 });
 
 app.post(
-  "/q",
+  "/cosmos/query",
   [
     body("q").isString().isLength({ min: 15, max: 76 }),
     body("c").isInt({ min: 0, max: 10 }),
