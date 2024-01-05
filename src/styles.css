@@ -4,7 +4,7 @@
   --color2: rgb(255, 0, 238);
   --color3: rgba(255, 0, 238, 0.3);
   --color5: rgba(140, 0, 255, 0.1);
-  --front: url(img/bg-card.webp);
+  --front: url(../img/bg-card.webp);
 }
 * {
   box-sizing: border-box;
@@ -41,7 +41,7 @@ h2 {
   font-size: 28px;
 }
 .universe {
-  background: url(img/background-stars.webp) no-repeat;
+  background: url(../img/background-stars.webp) no-repeat;
   background-size: cover;
   width: 100%;
   height: 100%;
@@ -134,7 +134,7 @@ h2 {
   height: 50%;
 }
 #welcome .astrozar .picture {
-  background-image: url(img/astrozar.webp);
+  background-image: url(../img/astrozar.webp);
   background-repeat: no-repeat;
   background-position: top center;
   background-size: 70cqh;
@@ -292,7 +292,6 @@ textarea:focus {
 .slot:hover .symbol {
   opacity: 0.3;
 }
-
 .deck-wrapper {
   width: 100%;
   height: 100%;
@@ -325,17 +324,13 @@ textarea:focus {
   align-items: center;
   height: 100%;
 }
-.swiper-deck {
+#swiper-deck {
   width: 7cm;
   height: 12cm;
-  max-width: 7cm;
-  max-height: 12cm;
 }
 .card {
   width: 7cm;
   height: 12cm;
-  max-width: 7cm;
-  max-height: 12cm;
   border-radius: 0.25cm;
   background-color: black;
   aspect-ratio: 7 / 12;
@@ -357,7 +352,8 @@ textarea:focus {
   transition: transform 1s ease, box-shadow 1s ease;
   will-change: transform, filter;
 }
-#slots .card.front:hover {
+#slots .card.front:hover,
+#slots .card.front.complete {
   box-shadow: -20px -20px 30px -25px var(--color1), 20px 20px 30px -25px var(--color2),
     1px 1px 1px 1px var(--color1), 1px 1px 1px 1px var(--color2),
     0 0 3px 4px rgba(255, 255, 255, 0.3), 0 55px 135px -20px rgba(0, 0, 0, 0.5);
@@ -393,8 +389,7 @@ textarea:focus {
 }
 .card.front:after {
   opacity: 1;
-  background-image: url("https://assets.codepen.io/13471/sparkles.gif"),
-    url(https://assets.codepen.io/13471/holo.png),
+  background-image: url(../img/sparkles.webp), url(../img/holo.webp),
     linear-gradient(
       125deg,
       #ff008450 15%,
@@ -411,7 +406,7 @@ textarea:focus {
   filter: brightness(1) contrast(1);
   transition: all 0.33s ease;
   mix-blend-mode: color-dodge;
-  opacity: 0.75;
+  opacity: 1;
 }
 #slots .card.front.active:after,
 #slots .card.front:hover:after {
@@ -544,7 +539,7 @@ textarea:focus {
   background-position: center;
 }
 .card.front .artwork {
-  background-image: url(img/dagger.webp);
+  background-image: url(../img/dagger.webp);
 }
 .card.front.triangle .text,
 .card.front.square .text,
@@ -570,8 +565,7 @@ textarea:focus {
 }
 .card.back:after {
   z-index: 2;
-  background-image: url("https://assets.codepen.io/13471/sparkles.gif"),
-    url(https://assets.codepen.io/13471/holo.png),
+  background-image: url(../img/sparkles.webp), url(../img/holo.webp),
     linear-gradient(
       125deg,
       #ff008450 15%,
@@ -586,7 +580,7 @@ textarea:focus {
   background-blend-mode: overlay;
   filter: brightness(1) contrast(1);
   mix-blend-mode: color-dodge;
-  opacity: 0.75;
+  opacity: 1;
 }
 .card.back:before {
   z-index: 1;
@@ -851,17 +845,19 @@ textarea:focus {
 }
 .tooltip {
   position: absolute;
-  font-size: 1rem;
-  color: black;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 1em 1em 0.7em 1em;
-  border-radius: 10px;
-  box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.5);
+  font-size: 1.4rem;
+  color: white;
+  padding: 0.8em 1.2em;
+  border-radius: 6px;
   z-index: 9999;
   margin: 2em;
   text-align: left;
   line-height: 1.1em;
   max-width: 22em;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  box-shadow: -10px -10px 50px -25px var(--color1), 10px 10px 60px -25px var(--color2),
+    0 0 1px 1px rgba(0, 0, 0, 0.3), 0 55px 135px -20px rgba(0, 0, 0, 0.5);
 }
 .tooltip.animated {
   animation: beat 2s ease-in-out infinite;
@@ -892,7 +888,7 @@ textarea:focus {
   top: 0;
 }
 #tooltip-slots .content {
-  background-image: url(img/icon-pointer.webp);
+  background-image: url(../img/icon-pointer.webp);
 }
 #tooltip-complete {
   bottom: 0;
@@ -907,7 +903,7 @@ textarea:focus {
   max-width: 29em;
 }
 #tooltip-drag .content {
-  background-image: url(img/icon-grabbing.webp);
+  background-image: url(../img/icon-grabbing.webp);
   padding-left: 70px;
 }
 #tooltip-hold {
@@ -1282,6 +1278,9 @@ textarea:focus {
   textarea {
     font-size: 4.9cqh;
   }
+  .tooltip {
+    font-size: 1.2rem;
+  }
 }
 @media (max-width: 586px) {
   #welcome .astrozar {
@@ -1305,6 +1304,9 @@ textarea:focus {
   textarea {
     height: 60%;
     padding: 14.5cqw 5.5cqw 0 5.5cqw;
+  }
+  .tooltip {
+    font-size: 1.1rem;
   }
 }
 @media (max-width: 382px) {

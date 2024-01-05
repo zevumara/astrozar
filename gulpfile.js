@@ -18,7 +18,7 @@ gulp.task("minify-js", () => {
     .src("src/app.js")
     .pipe(terser())
     .pipe(rename({ extname: ".min.js" }))
-    .pipe(gulp.dest("public"))
+    .pipe(gulp.dest("public/js/"))
     .pipe(livereload());
 });
 
@@ -27,7 +27,7 @@ gulp.task("minify-css", () => {
     .src("src/styles.css")
     .pipe(cleanCSS())
     .pipe(rename({ extname: ".min.css" }))
-    .pipe(gulp.dest("public"))
+    .pipe(gulp.dest("public/css/"))
     .pipe(livereload());
 });
 

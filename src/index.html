@@ -3,19 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow">
     <title>Astrozar</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.min.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="css/animate.min.css" />
+    <link rel="stylesheet" href="css/styles.min.css" />
+    <script src="js/swiper-bundle.min.js"></script>
   </head>
   <body>
     <div id="loader">
@@ -31,7 +25,7 @@
         <div class="progress"></div>
       </div>
     </div>
-    <div class="swiper mySwiper">
+    <main class="swiper">
       <div id="background" class="universe" data-swiper-parallax-y="-5%"></div>
       <div class="star-field">
         <div class="layer"></div>
@@ -43,42 +37,33 @@
         <div id="welcome" class="swiper-slide">
           <div class="astrozar"><div class="picture float"></div></div>
           <div class="dialog container">
-            <h1>Welcome, soul.</h1>
-            <h2>
-              <span>I am Astrozar, a steward of the stars</span>. My purpose is to serve as a
-              conduit through which cosmic energies may unveil messages that align with the flow of
-              your destiny.
-            </h2>
-            <a href="#" id="btnAsk" class="button pulse sfx-hover">Ask me anything Λ</a>
+            <h1 class="welcome_title"></h1>
+            <h2 class="welcome_text"></h2>
+            <a href="#" id="btnAsk" class="button pulse sfx-hover welcome_button"></a>
           </div>
         </div>
         <div id="concern" class="swiper-slide">
           <div class="container">
-            <h2>What is your concern?</h2>
-            <textarea autofocus id="query" name="q" placeholder="Type here."></textarea>
-            <a href="#" id="btnDraw" class="button disabled sfx-hover">Draw your cards</a>
+            <h2 class="concern_title"></h2>
+            <textarea autofocus id="query" class="concern_placeholder" name="q" placeholder=""></textarea>
+            <a href="#" id="btnDraw" class="button disabled sfx-hover concern_button"></a>
           </div>
         </div>
         <div id="shuffling-cards" class="swiper-slide wait">
           <div class="container">
-            <p class="blink">
-              Shuffling cards... <br />
-              Choose wisely.
-            </p>
+            <p class="blink shuffling_cards"></p>
           </div>
         </div>
         <div id="slots" class="swiper-slide">
           <div class="container">
             <div class="tooltip hide" id="tooltip-slots">
               <div class="content">
-                <p>
-                  Presioná sobre alguna de las <strong>tres ranuras</strong> para colocar una carta.
-                </p>
+                <p class="tooltip_slots"></p>
               </div>
             </div>
             <div class="tooltip hide" id="tooltip-complete">
               <div class="content">
-                <p>Repetí la acción hasta seleccionar las <strong>tres cartas</strong>.</p>
+                <p class="tooltip_complete"></p>
               </div>
             </div>
             <div id="slot-triangle" class="slot triangle">
@@ -103,12 +88,12 @@
                 <div class="symbol"></div>
               </div>
             </div>
-            <style class="hover"></style>
+            <style class="hover-card-effect"></style>
           </div>
         </div>
         <div id="universe-responding" class="swiper-slide wait">
           <div class="container">
-            <p class="blink">The universe is responding...</p>
+            <p class="blink universe_responding"></p>
           </div>
         </div>
         <div id="answer" class="swiper-slide">
@@ -116,8 +101,8 @@
             <p class="query"></p>
             <p class="answer">“<span></span>”</p>
             <div class="number">
-              <p>Your number is</p>
-              <h2>7 7 7</h2>
+              <p class="answer_number"></p>
+              <h2></h2>
             </div>
             <ul>
               <li id="btnShare">☍</li>
@@ -126,7 +111,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </mai>
     <div id="chosen" class="deck-wrapper hide">
       <div class="container">
         <div id="card-back" class="card back">
@@ -151,18 +136,15 @@
         <button id="btnBack">&#8617;</button>
         <div class="tooltip hide" id="tooltip-drag">
           <div class="content">
-            <p>
-              Arrastrá las cartas hacia la izquierda o hacia la derecha hasta elegir una.
-              <strong>Guiate por tu intuición.</strong>
-            </p>
+            <p class="tooltip_drag"></p>
           </div>
         </div>
         <div class="tooltip hide" id="tooltip-hold">
           <div class="content">
-            <p>Una vez elegida, mantené presionada la carta por varios segundos.</p>
+            <p class="tooltip_hold"></p>
           </div>
         </div>
-        <div class="swiper-deck mySwiperDeck">
+        <div id="swiper-deck">
           <div class="swiper-wrapper">
             <div class="swiper-slide card back">
               <div class="wrap">
@@ -238,7 +220,6 @@
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-    <script src="app.min.js"></script>
+    <script src="js/app.min.js"></script>
   </body>
 </html>
