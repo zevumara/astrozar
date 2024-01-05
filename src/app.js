@@ -13,7 +13,7 @@ const defaultUser = {
   circle: null,
   slide: 0,
   id: null,
-  debug: 1,
+  debug: 0,
 };
 
 const names = [
@@ -30,6 +30,8 @@ const names = [
 ];
 
 let user = JSON.parse(localStorage.getItem("user")) || { ...defaultUser };
+
+const url = user.debug ? "http://localhost:3000/" : "https://astrozar.vercel.app/";
 
 const swiper = new Swiper("main", {
   speed: 600,
@@ -240,7 +242,7 @@ function showAnswer() {
   $("#answer .query").innerText = user.query;
   $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
-  $("#btnShare").href = `s/${user.id}`;
+  $("#btnShare").href = `${url}s/${user.id}`;
   localStorage.removeItem("user");
   user = { ...defaultUser };
   swiper.allowSlideNext = true;
@@ -262,14 +264,15 @@ async function aleaIactaEst() {
   }, 600);
   const start = performance.now();
   let end;
-  let delay;
+  let delay = 3000;
+  let extra = 4500;
   if (user.debug) {
     user.id = 12345;
     user.answer = `Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente. Lo estoy tendiendo para ver hasta donde puede llegar. La idea es llegar a unas cuarenta palabras aproximado.`;
     end = performance.now();
-    delay = 3000 - (end - start);
+    delay = delay - (end - start);
   } else {
-    const response = await fetch("http://localhost:3000/q", {
+    const response = await fetch(`${url}q`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -286,8 +289,11 @@ async function aleaIactaEst() {
       user.id = spread.id;
       user.answer = spread.answer;
       end = performance.now();
-      delay = Math.max(3000 - (end - start), 0);
-      console.log("Delay:", delay);
+      delay = delay - (end - start);
+      if (delay < 0) {
+        extra = extra - Math.abs(delay);
+        delay = 0;
+      }
     } else {
       console.error("Error:", response.status);
     }
@@ -303,7 +309,7 @@ async function aleaIactaEst() {
         sound.play("the-answer.ogg");
       }, 5000);
       setTimeout(showAnswer, 5700);
-    }, 4500);
+    }, extra);
   }, delay);
 }
 
@@ -416,7 +422,6 @@ const image = {
 
 const language = {
   load: async function (lang) {
-    if (user.debug) lang = "es";
     const response = await fetch(`lang/${lang}.json`);
     const lang_file = await response.json();
     const texts = lang_file.text;
@@ -708,6 +713,7 @@ window.addEventListener("load", async () => {
     "key.ogg",
     "ambience.mp3",
   ]);
+  sound.play("ambience.mp3", true, 0.1, true);
   await image.load([
     "background-stars.webp",
     "astrozar.webp",
@@ -727,5 +733,4 @@ window.addEventListener("load", async () => {
   if (user.slide) {
     restore();
   }
-  sound.play("ambience.mp3", true, 0.1, true);
 });

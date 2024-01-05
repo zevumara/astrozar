@@ -19,7 +19,7 @@ app.use(parser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://127.0.0.1:27017/astrozar");
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.once("connected", () => console.log("Connected to MongoDB"));
 
 const Spread = mongoose.model("Spread", {
