@@ -1,4 +1,4 @@
-const url = "http://localhost:3000/";
+const url = "https://astrozar.vercel.app/";
 
 const defaultUser = {
   decks: {
