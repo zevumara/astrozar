@@ -262,7 +262,7 @@ function showAnswer() {
   $("#answer .query").innerText = user.query;
   $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
-  $("#btnShare").href = `${window.appConfig.apiUrl}cosmos/share/${user.id}`;
+  $("#btnShare").href = `${window.appConfig.apiUrl}?share=${user.id}`;
   localStorage.removeItem("user");
   user = { ...defaultUser };
   swiper.allowSlideNext = true;
