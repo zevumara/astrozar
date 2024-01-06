@@ -1,5 +1,3 @@
-const url = new URL(window.location.href);
-
 const defaultUser = {
   decks: {
     triangle: null,
@@ -715,6 +713,7 @@ let playingMusic = false;
 window.addEventListener("load", async () => {
   const lang = navigator.language.slice(0, 2) === "es" ? "es" : "en";
   await language.load(lang);
+  const url = new URL(window.location.href);
   const sharing_id = url.searchParams.get("share");
   if (sharing_id) {
     share(sharing_id);
