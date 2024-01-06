@@ -33,6 +33,10 @@ ul {
 h2 {
   font-weight: bold;
 }
+a {
+  text-decoration: none;
+  color: white;
+}
 .swiper {
   width: 100%;
   height: 100%;
@@ -789,21 +793,21 @@ textarea:focus {
 #hold .progress.animate {
   width: 100%;
 }
-#answer .query {
+.final .query {
   font-weight: bold;
   font-size: 2cqw;
   color: var(--color2);
   text-shadow: 0px 0px 9px rgba(0, 0, 0, 0.5);
 }
-#answer .answer {
+.final .answer {
   font-size: 2.8cqw;
   text-shadow: 0px 0px 9px var(--color4);
 }
-#answer .number p {
+.final .number p {
   font-size: 1.3cqw;
   opacity: 0.9;
 }
-#answer .number h2 {
+.final .number h2 {
   color: var(--color2);
   background: linear-gradient(240deg, var(--color2) 12%, var(--color4) 55%, var(--color2) 95%);
   background-clip: text;
@@ -816,12 +820,12 @@ textarea:focus {
   padding: 1cqw 1.8cqw;
   text-shadow: 0px 0px 9px rgba(0, 0, 0, 0.5);
 }
-#answer ul {
+.final ul {
   list-style: none;
   display: flex;
   gap: 10px;
 }
-#answer ul li {
+.final ul li {
   border: 2px solid black;
   box-shadow: 0 0 15px 0px rgba(255, 255, 255, 0.35);
   border-radius: 1.2cm;
@@ -840,7 +844,7 @@ textarea:focus {
   text-decoration: none;
   color: rgba(255, 255, 255, 0.6);
 }
-#answer ul li:hover {
+.final ul li:hover {
   opacity: 0.9;
 }
 .tooltip {
@@ -1206,17 +1210,17 @@ textarea:focus {
   textarea {
     font-size: 5.7cqh;
   }
-  #answer .query {
+  .final .query {
     font-size: 2.8cqh;
     background: none;
   }
-  #answer .answer {
+  .final .answer {
     font-size: 3.4cqh;
   }
-  #answer .number p {
+  .final .number p {
     font-size: 2.3cqh;
   }
-  #answer .number h2 {
+  .final .number h2 {
     font-size: 7.4cqh;
     line-height: 6.6cqh;
     padding: 2cqh 1.8cqh 0 1.8cqh;

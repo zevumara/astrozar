@@ -3,21 +3,20 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
-
 const mongoose = require("mongoose");
 const parser = require("body-parser");
+const fs = require("fs");
+const path = require("path");
+const validator = require("express-validator");
 const OpenAI = require("openai");
-const { body, validationResult } = require("express-validator");
-
 const cards = require("./src/cfg/cards");
-const generate_prompt = require("./src/cfg/prompt");
+const generatePrompt = require("./src/cfg/prompt");
 
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/src/views");
 
 app.use(parser.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
 
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.once("connected", () => console.log("Connected to MongoDB"));
@@ -49,12 +48,31 @@ const openai = new OpenAI({
   apiKey: process.env.API_KEY,
 });
 
+app.get("/", async (req, res) => {
+  const apiUrl = process.env.VERCEL_URL || "http://localhost:3000/";
+  try {
+    const filePath = path.join(process.cwd(), "public", "index.html");
+    if (fs.existsSync(filePath)) {
+      let file = fs.readFileSync(filePath, "utf8");
+      file = file.replace("{{apiUrl}}", apiUrl);
+      res.setHeader("Content-Type", "text/html");
+      return res.end(file);
+    } else {
+      res.status(404).send("The file does not exists.");
+    }
+  } catch (error) {
+    res.status(500).send("Error:", error);
+  }
+});
+
+app.use(express.static("public"));
+
 app.get("/cosmos/share/:id", async (req, res) => {
   try {
     const data = await Spread.findById(req.params.id);
+    const number = `${data.triangle[0].number} ${data.circle[0].number} ${data.square[0].number}`;
     if (data) {
-      //res.render("share", { data });
-      res.json({ share: data });
+      res.json({ query: data.query, answer: data.answer, number: number });
     } else {
       res.status(404).json({ error: "Data not found" });
     }
@@ -66,13 +84,13 @@ app.get("/cosmos/share/:id", async (req, res) => {
 app.post(
   "/cosmos/query",
   [
-    body("q").isString().isLength({ min: 15, max: 76 }),
-    body("t").isInt({ min: 0, max: 10 }),
-    body("c").isInt({ min: 0, max: 10 }),
-    body("s").isInt({ min: 0, max: 10 }),
+    validator.body("q").isString().isLength({ min: 15, max: 76 }),
+    validator.body("t").isInt({ min: 0, max: 10 }),
+    validator.body("c").isInt({ min: 0, max: 10 }),
+    validator.body("s").isInt({ min: 0, max: 10 }),
   ],
   async (req, res) => {
-    const errors = validationResult(req);
+    const errors = validator.validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -83,7 +101,7 @@ app.post(
     const c_word = cards.circle[c][Math.floor(Math.random() * cards.circle[c].length)];
     const s_word = cards.square[s][Math.floor(Math.random() * cards.square[s].length)];
 
-    const prompt = generate_prompt(q, t_word, c_word, s_word);
+    const prompt = generatePrompt(q, t_word, c_word, s_word);
 
     try {
       chat_completion = await openai.chat.completions.create({

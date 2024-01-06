@@ -1,4 +1,4 @@
-const url = "http://localhost:3000/";
+const url = new URL(window.location.href);
 
 const defaultUser = {
   decks: {
@@ -15,7 +15,7 @@ const defaultUser = {
   circle: null,
   slide: 0,
   id: null,
-  debug: 0,
+  debug: 1,
 };
 
 const names = [
@@ -60,6 +60,26 @@ function getRandomNumber() {
   const number = self.crypto.getRandomValues(new Uint32Array(1)).toString();
   const index = Math.floor(Math.random() * number.length);
   return parseInt(number.charAt(index), 10);
+}
+
+async function share(id) {
+  await image.load(["background-stars.webp"]);
+  $("#btnAstrozar a").href = window.appConfig.apiUrl;
+  allFilesLoaded = true;
+  const response = await fetch(`${window.appConfig.apiUrl}cosmos/share/${id}`);
+  if (response.ok) {
+    const spread = await response.json();
+    $("#share .query").innerText = spread.query;
+    $("#share .answer span").innerText = spread.answer;
+    $("#share .number h2").innerText = spread.number;
+    swiper.allowSlideNext = true;
+    swiper.slideTo(6, 0);
+    swiper.allowSlideNext = false;
+    animate("#loader .icon", "backOutDown");
+    animate(".curtain.left", "fadeOutLeft");
+    await animate(".curtain.right", "fadeOutRight");
+    $("#loader").classList.add("hide");
+  }
 }
 
 function restore() {
@@ -242,7 +262,7 @@ function showAnswer() {
   $("#answer .query").innerText = user.query;
   $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
-  $("#btnShare").href = `${url}cosmos/share/${user.id}`;
+  $("#btnShare").href = `${window.appConfig.apiUrl}cosmos/share/${user.id}`;
   localStorage.removeItem("user");
   user = { ...defaultUser };
   swiper.allowSlideNext = true;
@@ -274,7 +294,7 @@ function aleaIactaEst() {
   const start = performance.now();
   let end;
   let delay = 13500;
-  fetch(`${url}cosmos/query`, {
+  fetch(`${window.appConfig.apiUrl}cosmos/query`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -692,6 +712,13 @@ let allFilesLoaded = false;
 let playingMusic = false;
 
 window.addEventListener("load", async () => {
+  const lang = navigator.language.slice(0, 2) === "es" ? "es" : "en";
+  await language.load(lang);
+  const sharing_id = url.searchParams.get("share");
+  if (sharing_id) {
+    share(sharing_id);
+    return;
+  }
   await sound.load([
     "the-answer.ogg",
     "alea-iacta-est.ogg",
@@ -717,14 +744,13 @@ window.addEventListener("load", async () => {
     "holo.webp",
     "sparkles.webp",
   ]);
-  const lang = navigator.language.slice(0, 2) === "es" ? "es" : "en";
-  await language.load(lang);
+  allFilesLoaded = true;
   animate("#loader .icon", "backOutDown");
   animate(".curtain.left", "fadeOutLeft");
   await animate(".curtain.right", "fadeOutRight");
   $("#loader").classList.add("hide");
-  allFilesLoaded = true;
   if (user.slide) {
     restore();
   }
+  console.log(window.appConfig.apiUrl);
 });
