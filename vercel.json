@@ -8,5 +8,9 @@
       "src": "public/**",
       "use": "@vercel/static"
     }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/server.js" },
+    { "source": "/css/:asset*", "destination": "/public/css/:asset*" }
   ]
 }

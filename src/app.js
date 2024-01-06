@@ -72,6 +72,7 @@ async function share(id) {
     $("#share .query").innerText = spread.query;
     $("#share .answer span").innerText = spread.answer;
     $("#share .number h2").innerText = spread.number;
+    $("#share .answer_number").innerText = $("#answer .answer_number").innerText;
     swiper.allowSlideNext = true;
     swiper.slideTo(6, 0);
     swiper.allowSlideNext = false;
