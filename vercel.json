@@ -11,6 +11,7 @@
   ],
   "rewrites": [
     { "source": "/", "destination": "/server.js" },
-    { "source": "/css/:asset*", "destination": "/public/css/:asset*" }
+    { "source": "/cosmos/(.*)", "destination": "/server.js" },
+    { "source": "/:asset*", "destination": "/public/:asset*" }
   ]
 }

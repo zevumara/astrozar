@@ -49,7 +49,7 @@ const openai = new OpenAI({
 });
 
 app.get("/", async (req, res) => {
-  const apiUrl = process.env.VERCEL_URL || "http://localhost:3000/";
+  const apiUrl = process.env.VERCEL ? `https://astrozar.vercel.app/` : "http://localhost:3000/";
   try {
     const filePath = path.join(process.cwd(), "public", "index.html");
     if (fs.existsSync(filePath)) {
