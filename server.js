@@ -53,7 +53,8 @@ app.get("/cosmos/share/:id", async (req, res) => {
   try {
     const data = await Spread.findById(req.params.id);
     if (data) {
-      res.render("share", { data });
+      //res.render("share", { data });
+      res.json({ share: data });
     } else {
       res.status(404).json({ error: "Data not found" });
     }
@@ -66,8 +67,8 @@ app.post(
   "/cosmos/query",
   [
     body("q").isString().isLength({ min: 15, max: 76 }),
-    body("c").isInt({ min: 0, max: 10 }),
     body("t").isInt({ min: 0, max: 10 }),
+    body("c").isInt({ min: 0, max: 10 }),
     body("s").isInt({ min: 0, max: 10 }),
   ],
   async (req, res) => {
@@ -76,13 +77,13 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { q, c, t, s } = req.body;
+    const { q, t, c, s } = req.body;
 
-    const c_word = cards.circle[c][Math.floor(Math.random() * cards.circle[c].length)];
     const t_word = cards.triangle[t][Math.floor(Math.random() * cards.triangle[t].length)];
+    const c_word = cards.circle[c][Math.floor(Math.random() * cards.circle[c].length)];
     const s_word = cards.square[s][Math.floor(Math.random() * cards.square[s].length)];
 
-    const prompt = generate_prompt(q, c_word, t_word, s_word);
+    const prompt = generate_prompt(q, t_word, c_word, s_word);
 
     try {
       chat_completion = await openai.chat.completions.create({
@@ -93,16 +94,16 @@ app.post(
       const spread = new Spread({
         query: q,
         answer: answer,
-        circle: [
-          {
-            number: c,
-            word: c_word,
-          },
-        ],
         triangle: [
           {
             number: t,
             word: t_word,
+          },
+        ],
+        circle: [
+          {
+            number: c,
+            word: c_word,
           },
         ],
         square: [

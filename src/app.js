@@ -1,4 +1,4 @@
-const url = "https://astrozar.vercel.app/";
+const url = "http://localhost:3000/";
 
 const defaultUser = {
   decks: {
@@ -250,7 +250,7 @@ function showAnswer() {
   swiper.allowSlideNext = false;
 }
 
-async function aleaIactaEst() {
+function aleaIactaEst() {
   setTimeout(() => {
     sound.play("button.ogg", true);
     $("#flash").classList.remove("hide");
@@ -262,42 +262,6 @@ async function aleaIactaEst() {
       $("#flash").classList.add("hide");
     }, 250);
   }, 600);
-  const start = performance.now();
-  let end;
-  let delay = 3000;
-  let extra = 4500;
-  if (user.debug) {
-    user.id = 12345;
-    user.answer = `Esto es una respuesta de ejemplo porque está el modo debug activado para evitar gastar tokens innecesariamente. Lo estoy tendiendo para ver hasta donde puede llegar. La idea es llegar a unas cuarenta palabras aproximado.`;
-    end = performance.now();
-    delay = delay - (end - start);
-  } else {
-    const response = await fetch(`${url}cosmos/query`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        q: user.query,
-        c: user.circle,
-        t: user.triangle,
-        s: user.square,
-      }),
-    });
-    if (response.ok) {
-      const spread = await response.json();
-      user.id = spread.id;
-      user.answer = spread.answer;
-      end = performance.now();
-      delay = delay - (end - start);
-      if (delay < 0) {
-        extra = extra - Math.abs(delay);
-        delay = 0;
-      }
-    } else {
-      console.error("Error:", response.status);
-    }
-  }
   setTimeout(() => {
     sound.play("alea-iacta-est.ogg");
     setTimeout(() => {
@@ -305,12 +269,43 @@ async function aleaIactaEst() {
       swiper.allowSlideNext = true;
       swiper.slideNext(1400);
       swiper.allowSlideNext = false;
+    }, 4500);
+  }, 3500);
+  const start = performance.now();
+  let end;
+  let delay = 13500;
+  fetch(`${url}cosmos/query`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      q: user.query,
+      c: user.circle,
+      t: user.triangle,
+      s: user.square,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((spread) => {
+      user.id = spread.id;
+      user.answer = spread.answer;
+      end = performance.now();
+      delay = Math.max(delay - (end - start), 0);
+      if (user.debug) console.log("Delay:", delay);
       setTimeout(() => {
         sound.play("the-answer.ogg");
-      }, 5000);
-      setTimeout(showAnswer, 5700);
-    }, extra);
-  }, delay);
+      }, delay);
+      setTimeout(showAnswer, delay + 700);
+    })
+    .catch((error) => {
+      throw new Error(`Error: ${error}`);
+    });
 }
 
 function animate(element, animation, prefix = "animate__") {
@@ -346,7 +341,7 @@ const sound = {
   load: async function (files) {
     const loaded = {};
     const loadFiles = files.map(async (file) => {
-      console.log(`Loading "sfx/${file}" ...`);
+      if (user.debug) console.log(`Loading "sfx/${file}" ...`);
       const audioElement = new Audio();
       await new Promise((resolve) => {
         audioElement.addEventListener("canplaythrough", function () {
@@ -357,7 +352,7 @@ const sound = {
       });
     });
     await Promise.all(loadFiles);
-    console.log("All sound files are loaded:", loaded);
+    if (user.debug) console.log("All sound files are loaded:", loaded);
     this.files = loaded;
   },
   stop: function () {
@@ -366,7 +361,7 @@ const sound = {
       this.playing.currentTime = 0;
     }
   },
-  play: function (file, overlay = false, volume = 1, loop = false) {
+  play: function (file, overlay = true, volume = 1, loop = false) {
     if (!this.context) {
       this.context = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -401,7 +396,7 @@ const image = {
   load: async function (files) {
     const loaded = {};
     const loadFiles = files.map(async (file) => {
-      console.log(`Loading "img/${file}" ...`);
+      if (user.debug) console.log(`Loading "img/${file}" ...`);
       const imageElement = new Image();
       await new Promise((resolve) => {
         imageElement.addEventListener("load", function () {
@@ -412,7 +407,7 @@ const image = {
       });
     });
     await Promise.all(loadFiles);
-    console.log("All image files are loaded:", loaded);
+    if (user.debug) console.log("All image files are loaded:", loaded);
     this.files = loaded;
   },
   use: function (file) {
@@ -472,6 +467,10 @@ const tooltip = {
 $("#btnAsk").onclick = (e) => {
   e.preventDefault();
   if (!e.target.classList.contains("disabled")) {
+    if (!playingMusic) {
+      playingMusic = true;
+      sound.play("ambience.mp3", true, 0.1, true);
+    }
     sound.play("button.ogg", true);
     setTimeout(() => {
       e.target.classList.remove("pulse");
@@ -569,14 +568,7 @@ document.body.onpointerup = () => {
 
 $("#btnShare").onclick = (e) => {
   e.preventDefault();
-  navigator.clipboard
-    .writeText(e.target.href)
-    .then(() => {
-      console.log("Texto copiado al portapapeles con éxito.");
-    })
-    .catch((err) => {
-      console.error("Error al copiar al portapapeles:", err);
-    });
+  navigator.clipboard.writeText(e.target.href);
 };
 
 $("#btnAskMeAgain").onclick = (e) => {
@@ -696,6 +688,8 @@ function handleEnd() {
 }
 
 /*** Pre-load files ***/
+let allFilesLoaded = false;
+let playingMusic = false;
 
 window.addEventListener("load", async () => {
   await sound.load([
@@ -713,7 +707,6 @@ window.addEventListener("load", async () => {
     "key.ogg",
     "ambience.mp3",
   ]);
-  sound.play("ambience.mp3", true, 0.1, true);
   await image.load([
     "background-stars.webp",
     "astrozar.webp",
@@ -730,6 +723,7 @@ window.addEventListener("load", async () => {
   animate(".curtain.left", "fadeOutLeft");
   await animate(".curtain.right", "fadeOutRight");
   $("#loader").classList.add("hide");
+  allFilesLoaded = true;
   if (user.slide) {
     restore();
   }
