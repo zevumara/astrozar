@@ -11,7 +11,8 @@
   ],
   "rewrites": [
     { "source": "/", "destination": "/server.js" },
-    { "source": "/cosmos/(.*)", "destination": "/server.js" },
+    { "source": "/query", "destination": "/server.js" },
+    { "source": "/share/(.*)", "destination": "/server.js" },
     { "source": "/:asset*", "destination": "/public/:asset*" }
   ]
 }

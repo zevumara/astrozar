@@ -64,7 +64,7 @@ async function share(id) {
   await image.load(["background-stars.webp"]);
   $("#btnAstrozar a").href = window.appConfig.apiUrl;
   allFilesLoaded = true;
-  const response = await fetch(`${window.appConfig.apiUrl}cosmos/share/${id}`);
+  const response = await fetch(`${window.appConfig.apiUrl}share/${id}`);
   if (response.ok) {
     const spread = await response.json();
     $("#share .query").innerText = spread.query;
@@ -293,7 +293,7 @@ function aleaIactaEst() {
   const start = performance.now();
   let end;
   let delay = 13500;
-  fetch(`${window.appConfig.apiUrl}cosmos/query`, {
+  fetch(`${window.appConfig.apiUrl}query`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

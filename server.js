@@ -12,9 +12,6 @@ const OpenAI = require("openai");
 const cards = require("./src/cfg/cards");
 const generatePrompt = require("./src/cfg/prompt");
 
-app.set("view engine", "ejs");
-app.set("views", __dirname + "/src/views");
-
 app.use(parser.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -67,7 +64,7 @@ app.get("/", async (req, res) => {
 
 app.use(express.static("public"));
 
-app.get("/cosmos/share/:id", async (req, res) => {
+app.get("/share/:id", async (req, res) => {
   try {
     const data = await Spread.findById(req.params.id);
     const number = `${data.triangle[0].number} ${data.circle[0].number} ${data.square[0].number}`;
@@ -82,7 +79,7 @@ app.get("/cosmos/share/:id", async (req, res) => {
 });
 
 app.post(
-  "/cosmos/query",
+  "/query",
   [
     validator.body("q").isString().isLength({ min: 15, max: 76 }),
     validator.body("t").isInt({ min: 0, max: 10 }),
