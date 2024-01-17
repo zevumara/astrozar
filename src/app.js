@@ -92,12 +92,15 @@ function restore() {
   if (typeof user.triangle === "number") {
     setupCard("triangle");
   }
-  swiper.allowSlideNext = true;
-  swiper.slideTo(user.slide, 1000);
-  swiper.allowSlideNext = false;
-  tooltip.show("slots", "zoomInDown");
+  if (user.slide < 5) {
+    swiper.allowSlideNext = true;
+    swiper.slideTo(user.slide, 1000);
+    swiper.allowSlideNext = false;
+    tooltip.show("slots", "zoomInDown");
+  }
   $("#background").classList.add("universe");
   if (user.answer) {
+    console.log("answer", user.answer);
     sound.play("the-answer.ogg");
     showAnswer();
   } else if (
@@ -105,7 +108,11 @@ function restore() {
     typeof user.square === "number" &&
     typeof user.circle === "number"
   ) {
-    aleaIactaEst();
+    sound.play("alea-iacta-est.ogg");
+    swiper.allowSlideNext = true;
+    swiper.slideTo(4, 1400);
+    swiper.allowSlideNext = false;
+    aleaIactaEst(true);
   }
 }
 
@@ -269,27 +276,29 @@ function showAnswer() {
   swiper.allowSlideNext = false;
 }
 
-function aleaIactaEst() {
-  setTimeout(() => {
-    sound.play("button.ogg", true);
-    $("#flash").classList.remove("hide");
+function aleaIactaEst(restoring = false) {
+  if (!restoring) {
     setTimeout(() => {
-      tooltip.hide("complete");
-      $("#slot-triangle").classList.add("complete");
-      $("#slot-circle").classList.add("complete");
-      $("#slot-square").classList.add("complete");
-      $("#flash").classList.add("hide");
-    }, 250);
-  }, 600);
-  setTimeout(() => {
-    sound.play("alea-iacta-est.ogg");
+      sound.play("button.ogg", true);
+      $("#flash").classList.remove("hide");
+      setTimeout(() => {
+        tooltip.hide("complete");
+        $("#slot-triangle").classList.add("complete");
+        $("#slot-circle").classList.add("complete");
+        $("#slot-square").classList.add("complete");
+        $("#flash").classList.add("hide");
+      }, 250);
+    }, 600);
     setTimeout(() => {
-      save(5);
-      swiper.allowSlideNext = true;
-      swiper.slideNext(1400);
-      swiper.allowSlideNext = false;
-    }, 4500);
-  }, 3500);
+      sound.play("alea-iacta-est.ogg");
+      setTimeout(() => {
+        save(5);
+        swiper.allowSlideNext = true;
+        swiper.slideNext(1400);
+        swiper.allowSlideNext = false;
+      }, 4500);
+    }, 3500);
+  }
   const start = performance.now();
   let end;
   let delay = 13500;
@@ -307,9 +316,8 @@ function aleaIactaEst() {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        tryAgain();
       }
-      return response.json();
     })
     .then((spread) => {
       user.id = spread.id;
@@ -322,8 +330,38 @@ function aleaIactaEst() {
       }, delay);
       setTimeout(showAnswer, delay + 700);
     })
-    .catch((error) => {
-      throw new Error(`Error: ${error}`);
+    .catch(() => {
+      tryAgain();
+    });
+}
+
+function tryAgain() {
+  console.log("Error. Intentando de nuevo...");
+  fetch(`${window.appConfig.apiUrl}query`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      q: user.query,
+      c: user.circle,
+      t: user.triangle,
+      s: user.square,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        tryAgain();
+      }
+    })
+    .then((spread) => {
+      user.id = spread.id;
+      user.answer = spread.answer;
+      sound.play("the-answer.ogg");
+      setTimeout(showAnswer, 700);
+    })
+    .catch(() => {
+      tryAgain();
     });
 }
 
