@@ -335,6 +335,8 @@ textarea:focus {
 .card {
   width: 7cm;
   height: 12cm;
+  max-width: 7cm;
+  max-height: 12cm;
   border-radius: 0.25cm;
   background-color: black;
   aspect-ratio: 7 / 12;
@@ -390,27 +392,6 @@ textarea:focus {
   opacity: 0.5;
   filter: brightness(0.5) contrast(1);
   z-index: 1;
-}
-.card.front:after {
-  opacity: 1;
-  background-image: url(../img/sparkles.webp), url(../img/holo.webp),
-    linear-gradient(
-      125deg,
-      #ff008450 15%,
-      #fca40040 30%,
-      #ffff0030 40%,
-      #00ff8a20 60%,
-      #00cfff40 70%,
-      #cc4cfa50 85%
-    );
-  background-position: 50% 50%;
-  background-size: 160%;
-  background-blend-mode: overlay;
-  z-index: 2;
-  filter: brightness(1) contrast(1);
-  transition: all 0.33s ease;
-  mix-blend-mode: color-dodge;
-  opacity: 1;
 }
 #slots .card.front.active:after,
 #slots .card.front:hover:after {
@@ -550,7 +531,6 @@ textarea:focus {
 .card.front.circle .symbol {
   display: none;
 }
-
 .card.back {
   box-shadow: 5px 5px 5px 5px rgba(137, 86, 255, 0.1);
   display: flex;
@@ -567,8 +547,8 @@ textarea:focus {
   top: 0;
   mix-blend-mode: color-dodge;
 }
+.card.front:after,
 .card.back:after {
-  z-index: 2;
   background-image: url(../img/sparkles.webp), url(../img/holo.webp),
     linear-gradient(
       125deg,
@@ -582,7 +562,9 @@ textarea:focus {
   background-position: 50% 50%;
   background-size: 160%;
   background-blend-mode: overlay;
+  z-index: 2;
   filter: brightness(1) contrast(1);
+  transition: all 0.33s ease;
   mix-blend-mode: color-dodge;
   opacity: 1;
 }
@@ -850,16 +832,15 @@ textarea:focus {
 .tooltip {
   position: absolute;
   font-size: 1.4rem;
-  color: white;
-  padding: 0.8em 1.2em;
+  color: black;
+  padding: 0.6em 0.8em 0.5em 0.8em;
   border-radius: 6px;
   z-index: 9999;
   margin: 2em;
   text-align: left;
   line-height: 1.1em;
   max-width: 22em;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  background-color: rgba(255, 255, 255, 0.8);
   box-shadow: -10px -10px 50px -25px var(--color1), 10px 10px 60px -25px var(--color2),
     0 0 1px 1px rgba(0, 0, 0, 0.3), 0 55px 135px -20px rgba(0, 0, 0, 0.5);
 }
@@ -1204,6 +1185,17 @@ textarea:focus {
   }
   .wait .container p {
     font-size: 4.8cqh;
+  }
+  /* Removing effects for better performance */
+  .card.front:after,
+  .card.back:after {
+    background-image: none;
+    background-blend-mode: normal;
+    filter: none;
+    mix-blend-mode: normal;
+  }
+  .card.back {
+    box-shadow: none;
   }
 }
 @media (max-width: 1033px) {

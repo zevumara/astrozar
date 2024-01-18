@@ -316,8 +316,9 @@ function aleaIactaEst(restoring = false) {
   })
     .then((response) => {
       if (!response.ok) {
-        tryAgain();
+        throw new Error(`Error: ${response.status}`);
       }
+      return response.json();
     })
     .then((spread) => {
       user.id = spread.id;
@@ -331,38 +332,41 @@ function aleaIactaEst(restoring = false) {
       setTimeout(showAnswer, delay + 700);
     })
     .catch(() => {
-      tryAgain();
+      tryAgain(delay);
     });
 }
 
-function tryAgain() {
-  console.log("Error. Intentando de nuevo...");
-  fetch(`${window.appConfig.apiUrl}query`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      q: user.query,
-      c: user.circle,
-      t: user.triangle,
-      s: user.square,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        tryAgain();
-      }
+function tryAgain(delay) {
+  if (user.debug) console.log(`Error. Trying again in ${delay}...`);
+  setTimeout(() => {
+    fetch(`${window.appConfig.apiUrl}query`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        q: user.query,
+        c: user.circle,
+        t: user.triangle,
+        s: user.square,
+      }),
     })
-    .then((spread) => {
-      user.id = spread.id;
-      user.answer = spread.answer;
-      sound.play("the-answer.ogg");
-      setTimeout(showAnswer, 700);
-    })
-    .catch(() => {
-      tryAgain();
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((spread) => {
+        user.id = spread.id;
+        user.answer = spread.answer;
+        sound.play("the-answer.ogg");
+        setTimeout(showAnswer, 700);
+      })
+      .catch(() => {
+        tryAgain(2500);
+      });
+  }, delay);
 }
 
 function animate(element, animation, prefix = "animate__") {
@@ -537,7 +541,7 @@ $("#btnAsk").onclick = (e) => {
         $("#flash").classList.add("hide");
       }, 250);
       setTimeout(() => {
-        $("#query").focus();
+        if (window.innerWidth >= 767) $("#query").focus();
         nextSlide();
       }, 400);
     }, 200);
@@ -631,7 +635,7 @@ $("#btnShare").onclick = (e) => {
 $("#btnAskMeAgain").onclick = (e) => {
   e.preventDefault();
   $("#query").value = "";
-  $("#query").focus();
+  if (window.innerWidth >= 767) $("#query").focus();
   $("#btnDraw").classList.add("disabled");
   $("#btnDraw").classList.remove("pulse");
   swiper.allowSlidePrev = true;
