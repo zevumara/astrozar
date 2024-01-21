@@ -477,21 +477,23 @@ const image = {
 };
 
 const language = {
+  texts: null,
+  htmls: null,
   load: async function (lang) {
     const response = await fetch(`lang/${lang}.json`);
     const lang_file = await response.json();
-    const texts = lang_file.text;
-    for (const text in texts) {
+    this.texts = lang_file.text;
+    for (const text in this.texts) {
       const el = $(`.${text}`);
       if (el) {
-        el.innerText = texts[text];
+        el.innerText = this.texts[text];
       }
     }
-    const htmls = lang_file.html;
-    for (const html in htmls) {
+    this.htmls = lang_file.html;
+    for (const html in this.htmls) {
       const el = $(`.${html}`);
       if (el) {
-        el.innerHTML = htmls[html];
+        el.innerHTML = this.htmls[html];
       }
     }
     const placeholders = lang_file.placeholder;
@@ -572,13 +574,19 @@ $("textarea").onkeydown = (e) => {
 $("textarea").oninput = (e) => {
   const characters = e.target.value.length;
   sound.play("key.ogg", true);
-  if (characters > 15 && characters < 76) {
+  if (characters > 15 && characters <= 76) {
+    $("#btnDraw").innerText = language.texts["concern_button"];
     user.query = e.target.value;
     if ($("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.remove("disabled");
       $("#btnDraw").classList.add("pulse");
     }
   } else {
+    if (characters < 15) {
+      $("#btnDraw").innerText = language.texts["expand_question"];
+    } else if (characters > 76) {
+      $("#btnDraw").innerText = language.texts["resume_question"];
+    }
     user.query = null;
     if (!$("#btnDraw").classList.contains("disabled")) {
       $("#btnDraw").classList.add("disabled");
