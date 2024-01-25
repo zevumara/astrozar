@@ -338,6 +338,7 @@ textarea:focus {
   max-width: 7cm;
   max-height: 12cm;
   border-radius: 0.25cm;
+  border: 1px solid rgba(255, 200, 238, 0.2);
   background-color: black;
   aspect-ratio: 7 / 12;
   position: relative;
@@ -532,7 +533,7 @@ textarea:focus {
   display: none;
 }
 .card.back {
-  box-shadow: 5px 5px 5px 5px rgba(137, 86, 255, 0.1);
+  box-shadow: 5px 5px 5px 5px rgba(137, 86, 255, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -899,6 +900,13 @@ textarea:focus {
   text-align: center;
   max-width: 14em;
 }
+#tooltip-shared {
+  bottom: 0;
+  width: 400px;
+}
+#tooltip-shared .content {
+  padding-left: 0;
+}
 
 /*** Animations ***/
 @keyframes blinker {
@@ -1186,7 +1194,7 @@ textarea:focus {
   .wait .container p {
     font-size: 4.8cqh;
   }
-  /* Removing effects for better performance */
+  /* Removing effects for better performance on mobile */
   .card.front:after,
   .card.back:after {
     background-image: none;
@@ -1194,7 +1202,37 @@ textarea:focus {
     filter: none;
     mix-blend-mode: normal;
   }
+  #loader .icon {
+    bottom: 50%;
+    right: 50%;
+    transform: translate(50%, 50%);
+  }
+  .star-field {
+    display: none;
+  }
+  .card.back .wrap {
+    display: none;
+  }
+  .card.back:before,
+  .card.back:after {
+    display: none;
+  }
   .card.back {
+    background-size: cover;
+  }
+  .triangle .card.back,
+  .card.back.triangle {
+    background-image: url(../img/render-mobile-triangle.webp);
+  }
+  .circle .card.back,
+  .card.back.circle {
+    background-image: url(../img/render-mobile-circle.webp);
+  }
+  .square .card.back,
+  .card.back.square {
+    background-image: url(../img/render-mobile-square.webp);
+  }
+  .tooltip {
     box-shadow: none;
   }
 }

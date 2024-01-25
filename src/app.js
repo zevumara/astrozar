@@ -66,10 +66,10 @@ async function share(id) {
   allFilesLoaded = true;
   const response = await fetch(`${window.appConfig.apiUrl}share/${id}`);
   if (response.ok) {
-    const spread = await response.json();
-    $("#share .query").innerText = spread.query;
-    $("#share .answer span").innerText = spread.answer;
-    $("#share .number h2").innerText = spread.number;
+    user = await response.json();
+    $("#share .query").innerText = user.query;
+    $("#share .answer span").innerText = user.answer;
+    $("#share .number h2").innerText = user.number;
     $("#share .answer_number").innerText = $("#answer .answer_number").innerText;
     swiper.allowSlideNext = true;
     swiper.slideTo(6, 0);
@@ -232,11 +232,13 @@ function setupCard(type) {
   }
   $(`#slot-${type}`).classList.add("done");
   // Card effect
-  $(`#slot-${type}`).addEventListener("mousemove", handleMove);
-  $(`#slot-${type}`).addEventListener("touchmove", handleMove);
-  $(`#slot-${type}`).addEventListener("mouseout", handleEnd);
-  $(`#slot-${type}`).addEventListener("touchend", handleEnd);
-  $(`#slot-${type}`).addEventListener("touchcancel", handleEnd);
+  if (window.innerWidth >= 767) {
+    $(`#slot-${type}`).addEventListener("mousemove", handleMove);
+    $(`#slot-${type}`).addEventListener("touchmove", handleMove);
+    $(`#slot-${type}`).addEventListener("mouseout", handleEnd);
+    $(`#slot-${type}`).addEventListener("touchend", handleEnd);
+    $(`#slot-${type}`).addEventListener("touchcancel", handleEnd);
+  }
 }
 
 function setupSlot(type) {
@@ -268,9 +270,10 @@ function showAnswer() {
   $("#answer .query").innerText = user.query;
   $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
-  $("#btnShare").href = `${window.appConfig.apiUrl}?share=${user.id}`;
+  document.querySelectorAll(".btnShare").forEach((el) => {
+    el.href = `${window.appConfig.apiUrl}?share=${user.id}`;
+  });
   localStorage.removeItem("user");
-  user = { ...defaultUser };
   swiper.allowSlideNext = true;
   swiper.slideNext(1400);
   swiper.allowSlideNext = false;
@@ -525,6 +528,11 @@ const tooltip = {
   },
 };
 
+function hideKeyboard() {
+  $("#query").blur();
+  if ("virtualKeyboard" in navigator) navigator.virtualKeyboard.hide();
+}
+
 /*** Events ***/
 
 $("#btnAsk").onclick = (e) => {
@@ -556,6 +564,7 @@ $("textarea").onkeydown = (e) => {
     const characters = e.target.value.length;
     if (characters > 15 && characters < 76) {
       sound.play("button.ogg", true);
+      hideKeyboard();
       setTimeout(() => {
         $("#btnDraw").classList.remove("pulse");
         $("#btnDraw").classList.add("disabled");
@@ -599,6 +608,7 @@ $("#btnDraw").onclick = (e) => {
   e.preventDefault();
   if (!e.target.classList.contains("disabled")) {
     sound.play("button.ogg", true);
+    hideKeyboard();
     setTimeout(() => {
       e.target.classList.remove("pulse");
       e.target.classList.add("disabled");
@@ -635,13 +645,29 @@ document.body.onpointerup = () => {
   }
 };
 
-$("#btnShare").onclick = (e) => {
-  e.preventDefault();
-  navigator.clipboard.writeText(e.target.href);
-};
+document.querySelectorAll(".btnShare").forEach((el) => {
+  el.onclick = (e) => {
+    e.preventDefault();
+    if (navigator.share) {
+      navigator.share({
+        title: user.query,
+        text: user.answer,
+        url: e.target.href,
+      });
+    } else {
+      navigator.clipboard.writeText(e.target.href);
+      localStorage.removeItem("tooltip-shared");
+      tooltip.show("shared", "fadeIn", 0);
+      setTimeout(() => {
+        tooltip.hide("shared", "fadeOut");
+      }, 1000);
+    }
+  };
+});
 
 $("#btnAskMeAgain").onclick = (e) => {
   e.preventDefault();
+  user = { ...defaultUser };
   $("#query").value = "";
   if (window.innerWidth >= 767) $("#query").focus();
   $("#btnDraw").classList.add("disabled");

@@ -7,8 +7,9 @@
     "tooltip_hold": "Once chosen, hold down the card for several seconds.",
     "universe_responding": "The universe is responding...",
     "answer_number": "Your number is",
-    "expand_question": "Expand a little more",
-    "resume_question": "Be more concise"
+    "expand_question": "Tell me more",
+    "resume_question": "Tell me less",
+    "tooltip_shared": "Link copied to clipboard"
   },
   "html": {
     "welcome_text": "<span>I am Astrozar, a steward of the stars</span>. My purpose is to serve as a conduit through which cosmic energies may unveil messages that align with the flow of  your destiny.",

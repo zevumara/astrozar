@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow">
+    <meta name="google" content="notranslate" />
     <title>Astrozar</title>
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/swiper-bundle.min.css" />
@@ -105,7 +106,7 @@
               <h2></h2>
             </div>
             <ul>
-              <li id="btnShare">☍</li>
+              <li class="btnShare">☍</li>
               <li id="btnAskMeAgain">☇</li>
             </ul>
           </div>
@@ -119,8 +120,14 @@
               <h2></h2>
             </div>
             <ul>
+              <li class="btnShare">☍</li>
               <li id="btnAstrozar"><a href="#">Λ</a></li>
             </ul>
+            <div class="tooltip hide" id="tooltip-shared">
+              <div class="content">
+                <p class="tooltip_shared"></p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

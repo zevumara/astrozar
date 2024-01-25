@@ -7,8 +7,9 @@
     "tooltip_hold": "Una vez elegida, mantené presionada la carta por varios segundos.",
     "universe_responding": "El universo está respondiendo...",
     "answer_number": "Tu número es",
-    "expand_question": "Explayate un poco más",
-    "resume_question": "Sé más conciso"
+    "expand_question": "Contame más",
+    "resume_question": "Contame menos",
+    "tooltip_shared": "Vínculo copiado al portapapeles"
   },
   "html": {
     "welcome_text": "<span>Soy Astrozar, un sirviente de las estrellas</span>. Mi propósito es ser un canal por el cual las energías cósmicas puedan revelarte mensajes que estén alineados con el flujo de tu destino.",
