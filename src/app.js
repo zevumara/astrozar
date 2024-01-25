@@ -62,11 +62,13 @@ function getRandomNumber() {
 
 async function share(id) {
   await image.load(["background-stars.webp"]);
+  $(".star-field").style.display = "block";
   $("#btnAstrozar a").href = window.appConfig.apiUrl;
   allFilesLoaded = true;
   const response = await fetch(`${window.appConfig.apiUrl}share/${id}`);
   if (response.ok) {
     user = await response.json();
+    $("#share .btnShare").href = `${window.appConfig.apiUrl}?share=${id}`;
     $("#share .query").innerText = user.query;
     $("#share .answer span").innerText = user.answer;
     $("#share .number h2").innerText = user.number;
@@ -100,7 +102,6 @@ function restore() {
   }
   $("#background").classList.add("universe");
   if (user.answer) {
-    console.log("answer", user.answer);
     sound.play("the-answer.ogg");
     showAnswer();
   } else if (
@@ -267,6 +268,7 @@ function nextSlide() {
 
 function showAnswer() {
   if (!user.query || !user.answer) return;
+  $(".star-field").style.display = "block";
   $("#answer .query").innerText = user.query;
   $("#answer .answer span").innerText = user.answer;
   $("#answer .number h2").innerText = `${user.triangle} ${user.circle} ${user.square}`;
@@ -649,11 +651,20 @@ document.querySelectorAll(".btnShare").forEach((el) => {
   el.onclick = (e) => {
     e.preventDefault();
     if (navigator.share) {
-      navigator.share({
-        title: user.query,
-        text: user.answer,
-        url: e.target.href,
-      });
+      navigator
+        .share({
+          title: language.texts["sharing_look"],
+          //text: language.texts["sharing_question"] + user.query + "\n\n" + "“" + user.answer + "”",
+          text:
+            language.texts["sharing_question"] +
+            user.query +
+            "\n\n" +
+            language.texts["sharing_look"],
+          url: e.target.href,
+        })
+        .then(() => {
+          console.log("Enlace compartido");
+        });
     } else {
       navigator.clipboard.writeText(e.target.href);
       localStorage.removeItem("tooltip-shared");

@@ -9,7 +9,9 @@
     "answer_number": "Your number is",
     "expand_question": "Tell me more",
     "resume_question": "Tell me less",
-    "tooltip_shared": "Link copied to clipboard"
+    "tooltip_shared": "Link copied to clipboard",
+    "sharing_question": "Question: ",
+    "sharing_look": "Look what Astrozar answered me!"
   },
   "html": {
     "welcome_text": "<span>I am Astrozar, a steward of the stars</span>. My purpose is to serve as a conduit through which cosmic energies may unveil messages that align with the flow of  your destiny.",
