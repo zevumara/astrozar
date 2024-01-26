@@ -29,6 +29,8 @@ const names = [
   "Gem",
 ];
 
+const numbers = ["zero", "one", "two", "tree", "four", "five", "six", "seven", "eight", "nine"];
+
 let user = JSON.parse(localStorage.getItem("user")) || { ...defaultUser };
 
 const swiper = new Swiper("main", {
@@ -191,7 +193,10 @@ async function chooseCard() {
   $("#card-front").classList.remove("triangle");
   $("#card-front").classList.remove("circle");
   $("#card-front").classList.remove("square");
-  $("#card-front").classList.add(user.target);
+  $("#card-front").classList.add(user.target, numbers[user[user.target]]);
+  $("#card-front .artwork").style.backgroundImage = `url('img/${user.target}-${
+    user[user.target]
+  }.webp')`;
   $("#card-front .number").innerText = user[user.target];
   if (user.target === "circle") {
     $("#card-front .text").innerText = names[user[user.target]];
@@ -226,6 +231,7 @@ function setupCard(type) {
   // Fill slot
   $(`#slot-${type}`).classList.remove("slot");
   $(`#slot-${type}`).classList.add("card", "front");
+  $(`#slot-${type} .artwork`).style.backgroundImage = `url('img/${type}-${user[type]}.webp')`;
   $("#card-back").classList.remove("hide");
   $(`#slot-${type} .number`).innerText = user[type];
   if (type === "circle") {
