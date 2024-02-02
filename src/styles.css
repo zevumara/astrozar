@@ -255,7 +255,7 @@ textarea:focus {
   position: relative;
   overflow: hidden;
   transform-origin: center;
-  padding: 2cqw;
+  padding: 0.25cm;
   text-align: center;
   cursor: pointer;
 }
@@ -271,30 +271,28 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   border-radius: 0.25cm;
-  box-shadow: inset rgba(0, 0, 0, 0.9) 0px 0px 60px -12px;
+  box-shadow: inset rgba(0, 0, 0) 0px 0px 120px -12px;
 }
 .slot .symbol {
-  max-width: 2.7cm;
-  max-height: 2.7cm;
-  width: 13cqw;
-  height: 13cqw;
-  background-color: black;
-  opacity: 0.2;
-  transition: opacity 0.3s;
+  width: 5cm;
+  height: 5cm;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.3;
 }
 .slot.triangle .symbol {
-  width: 0;
-  height: 0;
-  border: 1.5cm solid transparent;
-  border-top: 0;
-  border-bottom: 2.7cm solid black;
-  background: none;
+  background-image: url(../img/triangle.svg);
+  background-size: 115%;
 }
 .slot.circle .symbol {
-  border-radius: 2.7cm;
+  background-image: url(../img/circle.svg);
+}
+.slot.square .symbol {
+  background-image: url(../img/square.svg);
 }
 .slot:hover .symbol {
-  opacity: 0.3;
+  opacity: 0.6;
 }
 .deck-wrapper {
   width: 100%;
@@ -455,75 +453,98 @@ textarea:focus {
   border-radius: 0.25cm;
 }
 .card.front .text {
-  display: block;
   position: absolute;
-  width: 100%;
+  width: 90%;
+  margin: 0 5%;
   bottom: 0.6cm;
-  text-transform: uppercase;
   color: var(--color2);
   font-weight: bold;
   font-size: 0.65cm;
   z-index: 2;
   background-color: rgba(0, 0, 0, 0.4);
-  opacity: 0.8;
+  opacity: 0.9;
+  border-radius: 0.2cm;
+  backdrop-filter: blur(7px);
   /* padding: 0.2cm 0.3cm;
   border-radius: 0.2cm;
   left: 50%;
   transform: translateX(-50%); */
 }
-.card.front .number {
-  width: 0.9cm;
-  height: 0.9cm;
-  border-radius: 0.9cm;
-  display: flex;
-  font-weight: bold;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0.6cm;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
+.circle.card.front .text {
+  text-transform: uppercase;
 }
-.card.front.circle .number {
-  font-size: 0.7cm;
-  color: black;
-  margin: auto;
-  background: linear-gradient(150deg, var(--color2) 12%, var(--color4) 95%);
+.triangle.card.front .text {
+  font-size: 0.45cm;
+  line-height: 0.55cm;
+  font-weight: normal;
+  padding: 0.1cm 0;
 }
-.card.front.square .number,
-.card.front.triangle .number {
-  font-size: 0.9cm;
-  color: var(--color3);
-  background: linear-gradient(230deg, var(--color2) 12%, var(--color4) 55%, var(--color2) 95%);
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-  margin: auto;
-}
-.card.front.square .number {
-  margin: 0;
+.square.card.front .text {
+  font-size: 0.55cm;
+  line-height: 0.55cm;
+  padding: 0.1cm 0;
 }
 .card.front .symbol {
+  width: 2cm;
+  height: 1.2cm;
   position: absolute;
-  opacity: 0.8;
-  bottom: 0;
-}
-.card.front.triangle .symbol {
-  width: 0;
-  height: 0;
-  border: 0.5cm solid transparent;
-  border-top: 0;
-  border-bottom: 0.8cm solid var(--color2);
+  z-index: 1;
+  font-size: 0.7cm;
+  line-height: 0.7cm;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
+  color: black;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: invert(17%) sepia(68%) saturate(5246%) hue-rotate(296deg) brightness(107%) contrast(124%);
+}
+.card.front .number {
+  width: 86%;
+  top: 0.6cm;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 0;
+  font-weight: bold;
+  z-index: 2;
+  border-radius: 0.2cm;
+}
+.card.front.triangle .number,
+.card.front.square .number {
+  width: 1.4cm;
+  color: var(--color2);
+  /* opacity: 0.9;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(7px); */
+  padding-right: 0.6cm;
+  font-size: 0.75cm;
+}
+.card.front.circle .number {
+  top: 0.6cm;
+  color: black;
+  padding: 0.12cm 0 0 0;
+  font-size: 0.55cm;
+}
+.card.front.triangle .symbol,
+.card.front.square .symbol {
+  background-image: url(../img/triangle.svg);
+  width: 0.9cm;
+  height: 0.9cm;
+  top: 0.65cm;
+  transform: translateX(-20%);
 }
 .card.front.square .symbol {
-  width: 0.75cm;
-  height: 0.75cm;
-  right: 0;
-  transform: translateX(-0.1cm);
-  background: linear-gradient(150deg, var(--color2) 12%, var(--color4) 95%);
+  background-image: url(../img/square.svg);
+  width: 0.85cm;
+  height: 0.85cm;
+  top: 0.68cm;
+  transform: translateX(-10%);
+}
+.card.front.circle .symbol {
+  background-image: url(../img/circle.svg);
+  top: 0.54cm;
 }
 .card.front .artwork {
   width: 100%;
@@ -535,10 +556,15 @@ textarea:focus {
   background-repeat: no-repeat;
   background-position: center;
   z-index: 0;
-  mix-blend-mode: screen;
-  opacity: 0.4;
+  mix-blend-mode: lighten;
+  opacity: 0.5;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   filter: brightness(1) contrast(1);
+  background-image: url(../img/test.jpg) !important;
+}
+.triangle.card.front .artwork {
+  background-image: url(../img/test3.jpg) !important;
 }
 .card.front .artwork:before {
   background-position: 50% 50%;
@@ -552,11 +578,11 @@ textarea:focus {
   );
   filter: brightness(1) contrast(1);
 }
-.card.front.triangle .text,
+/* .card.front.triangle .text,
 .card.front.square .text,
 .card.front.circle .symbol {
   display: none;
-}
+} */
 .card.back {
   box-shadow: 5px 5px 5px 5px rgba(137, 86, 255, 0.04);
   display: flex;
@@ -638,12 +664,28 @@ textarea:focus {
   border-radius: 0.2cm;
 }
 .card.back .symbol {
-  width: 2.5cm;
-  height: 2.5cm;
-  background-color: var(--color2);
-  opacity: 0.1;
+  width: 4cm;
+  height: 4cm;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: invert(17%) sepia(68%) saturate(5246%) hue-rotate(296deg) brightness(107%) contrast(124%);
+  opacity: 0.2;
 }
-.card.back.triangle .symbol,
+.triangle .card.back .symbol,
+.card.back.triangle .symbol {
+  background-image: url(../img/triangle.svg);
+  background-size: 115%;
+}
+.circle .card.back .symbol,
+.card.back.circle .symbol {
+  background-image: url(../img/circle.svg);
+}
+.square .card.back .symbol,
+.card.back.square .symbol {
+  background-image: url(../img/square.svg);
+}
+/* .card.back.triangle .symbol,
 .triangle .card.back .symbol {
   width: 0;
   height: 0;
@@ -655,7 +697,7 @@ textarea:focus {
 .card.back.circle .symbol,
 .circle .card.back .symbol {
   border-radius: 2.5cm;
-}
+} */
 #btnBack {
   border: 2px solid black;
   box-shadow: 0 0 15px 0px rgba(255, 255, 255, 0.35);
@@ -1320,21 +1362,8 @@ textarea:focus {
   #slots .card.front.triangle .number {
     font-size: 4cqw;
   }
-  #slots .card.front.triangle .symbol {
-    border: 2.2cqw solid transparent;
-    border-bottom: 3.6cqw solid var(--color2);
-  }
-  #slots .card.front.square .symbol {
-    width: 3.2cqw;
-    height: 3.2cqw;
-  }
   #slots .card {
     padding: 1cqh 2cqw 2.5cqh 2cqw;
-  }
-  #slots .slot.triangle .symbol {
-    border: 7cqw solid transparent;
-    border-bottom: 13cqw solid black;
-    transform: translateY(-18%);
   }
   .container {
     font-size: 3.5cqw;

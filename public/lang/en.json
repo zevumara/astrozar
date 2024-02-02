@@ -22,5 +22,43 @@
   },
   "placeholder": {
     "concern_placeholder": "Type here"
+  },
+  "cards": {
+    "triangle": [
+      "Tridente de Poseidón",
+      "Espada de Damocles",
+      "Flecha de Eros",
+      "Cuerno de Amaltea",
+      "Sandalias de Hermes",
+      "Arco de Artemisa",
+      "Espejo de Afrodita",
+      "Capa de Hades",
+      "Escudo de Aquiles",
+      "Bastón de Asclepio"
+    ],
+    "circle": [
+      "Perseo",
+      "Andrómeda",
+      "Orión",
+      "Pegaso",
+      "Centaurus",
+      "Fénix",
+      "Lacerta",
+      "Cefeo",
+      "Cygnus",
+      "Corona Australis"
+    ],
+    "square": [
+      "Carnero",
+      "Toro",
+      "Cangrejo",
+      "León",
+      "Escorpión",
+      "Dragón",
+      "Tigre",
+      "Caballo",
+      "Serpiente",
+      "Cabra"
+    ]
   }
 }

@@ -14,20 +14,9 @@ const defaultUser = {
   slide: 0,
   id: null,
   debug: 1,
+  deck: null,
+  deckIndex: null,
 };
-
-const names = [
-  "Mirror",
-  "Rainbow",
-  "Eye",
-  "Staff",
-  "Void",
-  "Dodecahedron",
-  "Dagger",
-  "Plant",
-  "Heart",
-  "Gem",
-];
 
 const numbers = ["zero", "one", "two", "tree", "four", "five", "six", "seven", "eight", "nine"];
 
@@ -167,10 +156,13 @@ function showDeck(deck) {
   $("#deck").classList.add("appear");
   tooltip.hide("slots");
   tooltip.show("drag");
-  deckSwiper.slideTo(5, 0);
   deckSwiper.update(); // Bug fix?
   deckSwiper.update();
   deckSwiper.enable();
+  if (user.deck != deck) {
+    deckSwiper.slideTo(5, 0);
+    user.deck = deck;
+  }
 }
 
 async function chooseCard() {
@@ -198,9 +190,7 @@ async function chooseCard() {
     user[user.target]
   }.webp')`;
   $("#card-front .number").innerText = user[user.target];
-  if (user.target === "circle") {
-    $("#card-front .text").innerText = names[user[user.target]];
-  }
+  $("#card-front .text").innerText = language.cards[user.target][user[user.target]];
   $("#chosen").classList.remove("animate__animated", "animate__fadeOut", "hide");
   // Animation when choosing the card
   await animate("#card-back", "wobble");
@@ -223,7 +213,7 @@ async function chooseCard() {
     typeof user.square === "number" &&
     typeof user.circle === "number"
   ) {
-    aleaIactaEst();
+    //aleaIactaEst();
   }
 }
 
@@ -234,9 +224,7 @@ function setupCard(type) {
   $(`#slot-${type} .artwork`).style.backgroundImage = `url('img/${type}-${user[type]}.webp')`;
   $("#card-back").classList.remove("hide");
   $(`#slot-${type} .number`).innerText = user[type];
-  if (type === "circle") {
-    $(`#slot-${type} .text`).innerText = names[user[type]];
-  }
+  $(`#slot-${type} .text`).innerText = language.cards[type][user[type]];
   $(`#slot-${type}`).classList.add("done");
   // Card effect
   if (window.innerWidth >= 767) {
@@ -490,6 +478,7 @@ const image = {
 const language = {
   texts: null,
   htmls: null,
+  cards: null,
   load: async function (lang) {
     const response = await fetch(`lang/${lang}.json`);
     const lang_file = await response.json();
@@ -514,6 +503,7 @@ const language = {
         el.setAttribute("placeholder", placeholders[placeholder]);
       }
     }
+    this.cards = lang_file.cards;
   },
 };
 
