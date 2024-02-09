@@ -456,7 +456,6 @@ textarea:focus {
   position: absolute;
   width: 90%;
   margin: 0 5%;
-  bottom: 0.6cm;
   color: var(--color2);
   font-weight: bold;
   font-size: 0.65cm;
@@ -472,28 +471,15 @@ textarea:focus {
 }
 .circle.card.front .text {
   text-transform: uppercase;
+  bottom: 0.6cm;
 }
-.triangle.card.front .text {
-  font-size: 0.45cm;
-  line-height: 0.55cm;
-  font-weight: normal;
-  padding: 0.1cm 0;
-}
+.triangle.card.front .text,
 .square.card.front .text {
-  font-size: 0.55cm;
-  line-height: 0.55cm;
-  padding: 0.1cm 0;
+  top: 0.6cm;
 }
 .card.front .symbol {
-  width: 2cm;
+  width: 1.2cm;
   height: 1.2cm;
-  position: absolute;
-  z-index: 1;
-  font-size: 0.7cm;
-  line-height: 0.7cm;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   color: black;
   background-size: contain;
   background-repeat: no-repeat;
@@ -501,11 +487,6 @@ textarea:focus {
   filter: invert(17%) sepia(68%) saturate(5246%) hue-rotate(296deg) brightness(107%) contrast(124%);
 }
 .card.front .number {
-  width: 86%;
-  top: 0.6cm;
-  left: 50%;
-  position: absolute;
-  transform: translateX(-50%);
   padding: 0;
   font-weight: bold;
   z-index: 2;
@@ -513,38 +494,53 @@ textarea:focus {
 }
 .card.front.triangle .number,
 .card.front.square .number {
-  width: 1.4cm;
   color: var(--color2);
-  /* opacity: 0.9;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(7px); */
-  padding-right: 0.6cm;
   font-size: 0.75cm;
 }
 .card.front.circle .number {
-  top: 0.6cm;
-  color: black;
-  padding: 0.12cm 0 0 0;
   font-size: 0.55cm;
+  line-height: 0.15cm;
+  position: absolute;
+  padding-left: 0.05cm;
+  color: black;
 }
-.card.front.triangle .symbol,
-.card.front.square .symbol {
+.card.front .number-symbol {
+  position: absolute;
+  opacity: 0.9;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.card.front.triangle .number-symbol,
+.card.front.square .number-symbol {
+  padding-left: 0.25cm;
+  bottom: 0.6cm;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 0.2cm;
+  backdrop-filter: blur(7px);
+}
+.card.front.circle .number-symbol {
+  top: 0.68cm;
+  opacity: 0.7;
+}
+.card.front.triangle .symbol {
   background-image: url(../img/triangle.svg);
   width: 0.9cm;
   height: 0.9cm;
-  top: 0.65cm;
-  transform: translateX(-20%);
+  display: inline-block;
 }
 .card.front.square .symbol {
   background-image: url(../img/square.svg);
   width: 0.85cm;
   height: 0.85cm;
-  top: 0.68cm;
+  bottom: 0.68cm;
   transform: translateX(-10%);
 }
 .card.front.circle .symbol {
   background-image: url(../img/circle.svg);
-  top: 0.54cm;
 }
 .card.front .artwork {
   width: 100%;
