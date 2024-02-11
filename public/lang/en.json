@@ -25,16 +25,16 @@
   },
   "cards": {
     "triangle": [
-      "Tridente de Poseidón",
-      "Espada de Damocles",
-      "Flecha de Eros",
-      "Cuerno de Amaltea",
-      "Sandalias de Hermes",
-      "Arco de Artemisa",
-      "Espejo de Afrodita",
-      "Capa de Hades",
-      "Escudo de Aquiles",
-      "Bastón de Asclepio"
+      "Amazona",
+      "Azteca",
+      "Gaucho",
+      "Mohicano",
+      "Ninja",
+      "Rajput",
+      "Samurái",
+      "Espartano",
+      "Vikingo",
+      "Zulu"
     ],
     "circle": [
       "Perseo",
@@ -49,16 +49,16 @@
       "Ofiuco"
     ],
     "square": [
-      "Carnero",
-      "Toro",
-      "Cangrejo",
-      "León",
-      "Escorpión",
+      "Tortuga",
+      "Delfín",
+      "Cóndor",
+      "Unicornio",
+      "Carpincho",
       "Dragón",
+      "Búho",
       "Tigre",
-      "Caballo",
       "Serpiente",
-      "Cabra"
+      "Oso"
     ]
   }
 }
