@@ -1,0 +1,65 @@
+{
+  "text": {
+    "title": "Astrozar — Cosmic Consultant",
+    "welcome_title": "Greetings, soul.",
+    "welcome_button": "Ask me something Λ",
+    "concern_title": "What concerns you regarding the future?",
+    "concern_button": "Draw cards",
+    "tooltip_hold": "Once chosen, hold down the card for several seconds.",
+    "universe_responding": "The universe is responding...",
+    "answer_number": "Your number is",
+    "expand_question": "Tell me more...",
+    "tooltip_shared": "Link copied to clipboard",
+    "sharing_question": "Question: ",
+    "sharing_look": "Look what Astrozar answered me!",
+    "calling": "...calling Astrozar..."
+  },
+  "html": {
+    "welcome_text": "<strong>I am Astrozar, a steward of the stars</strong>. My purpose is to serve as a conduit through which cosmic energies may unveil messages that align with the flow of  your destiny.",
+    "shuffling_cards": "Shuffling cards...",
+    "tooltip_tap": "Press on one of the <strong>Destiny Slots</strong> and place a card. Repeat the action until all <strong>Three Slots</strong> are filled.",
+    "tooltip_swipe": "<strong>Swipe</strong> right or left to choose the correct card. <strong>Trust your intuition</strong>.",
+    "tooltip_hold": "Once chosen, <strong>hold down the card</strong> for a few seconds. If the card resonates with your destiny, it will begin to vibrate."
+  },
+  "placeholder": {
+    "concern_placeholder": "Type here"
+  },
+  "cards": {
+    "triangle": [
+      "Amazona",
+      "Azteca",
+      "Gaucho",
+      "Mohicano",
+      "Ninja",
+      "Rajput",
+      "Samurái",
+      "Espartano",
+      "Vikingo",
+      "Zulu"
+    ],
+    "circle": [
+      "Perseo",
+      "Andrómeda",
+      "Orión",
+      "Pegaso",
+      "Centaurus",
+      "Fénix",
+      "Lacerta",
+      "Cefeo",
+      "Cygnus",
+      "Ofiuco"
+    ],
+    "square": [
+      "Tortuga",
+      "Delfín",
+      "Cóndor",
+      "Unicornio",
+      "Carpincho",
+      "Dragón",
+      "Búho",
+      "Tigre",
+      "Serpiente",
+      "Oso"
+    ]
+  }
+}

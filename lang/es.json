@@ -1,0 +1,65 @@
+{
+  "text": {
+    "title": "Astrozar — Consultor Cósmico",
+    "welcome_title": "Saludos, alma.",
+    "welcome_button": "Consultame algo Λ",
+    "concern_title": "¿Qué te concierne respecto al futuro?",
+    "concern_button": "Tirar cartas",
+    "tooltip_hold": "Una vez elegida, mantené presionada la carta por varios segundos.",
+    "universe_responding": "El universo está respondiendo...",
+    "answer_number": "Tu número es",
+    "expand_question": "Contame más...",
+    "tooltip_shared": "Vínculo copiado al portapapeles",
+    "sharing_question": "Pregunta: ",
+    "sharing_look": "¡Mirá lo que me respondió Astrozar!",
+    "calling": "...llamando a Astrozar..."
+  },
+  "html": {
+    "welcome_text": "<strong>Soy Astrozar, un sirviente de las estrellas</strong>. Mi propósito es ser un canal a través por el cual las energías cósmicas puedan revelarte mensajes que estén alineados con el flujo de tu destino.",
+    "shuffling_cards": "Barajando cartas...",
+    "tooltip_tap": "Presioná en uno de los <strong>Huecos de Destino</strong> y colocá una carta. Repetí la acción hasta completar los <strong>Tres Huecos</strong>.",
+    "tooltip_swipe": "Hacé un <strong>swipe</strong> hacia la derecha o hacia la izquierda hasta elegir la carta correcta. <strong>Guiate con tu intuición</strong>.",
+    "tooltip_hold": "Una vez elegida, <strong>mantené la carta presionada</strong> unos segundos. Si la carta resuena con tu destino, comenzará a vibrar."
+  },
+  "placeholder": {
+    "concern_placeholder": "Escribí acá"
+  },
+  "cards": {
+    "triangle": [
+      "Amazona",
+      "Azteca",
+      "Gaucho",
+      "Mohicano",
+      "Ninja",
+      "Rajput",
+      "Samurái",
+      "Espartano",
+      "Vikingo",
+      "Zulu"
+    ],
+    "circle": [
+      "Perseo",
+      "Andrómeda",
+      "Orión",
+      "Pegaso",
+      "Centaurus",
+      "Fénix",
+      "Lacerta",
+      "Cefeo",
+      "Cygnus",
+      "Ofiuco"
+    ],
+    "square": [
+      "Tortuga",
+      "Delfín",
+      "Cóndor",
+      "Unicornio",
+      "Carpincho",
+      "Dragón",
+      "Búho",
+      "Tigre",
+      "Serpiente",
+      "Oso"
+    ]
+  }
+}
