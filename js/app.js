@@ -54,7 +54,7 @@ class Application {
     this.onload = onload;
     this.screens = new Screens();
     this.translation = new Translation();
-    this._loadSession();
+    this.newSession();
     this.screens.initialization(this, customScreens);
     this._debug(debug);
     this._effects();
@@ -72,7 +72,7 @@ class Application {
     });
   }
 
-  _loadSession() {
+  newSession() {
     const newSession = {
       deck: {
         octahedron: [],
@@ -527,6 +527,10 @@ class Translation {
 class WelcomeScreen extends Screen {
   constructor(app, selector) {
     super(app, selector);
+  }
+
+  reset() {
+    this.el.querySelector("button").classList.remove("disabled");
   }
 
   events() {
@@ -1062,6 +1066,12 @@ class AnswerScreen extends Screen {
     numberEl.innerText = `${this._.session.spread.octahedron} ${this._.session.spread.icosahedron} ${this._.session.spread.dodecahedron}`;
   }
 
+  ready() {
+    localStorage.removeItem("session");
+    this._.newSession();
+    if (this._.debug) console.log("Session:", this._.session);
+  }
+
   events() {
     this.addEvent("click", "._share", async function (el) {
       const urlShare = `http://127.0.0.1:5500/?share=${this._.session.spread.id}`;
@@ -1085,6 +1095,7 @@ class AnswerScreen extends Screen {
       }
     });
     this.addEvent("click", "._retry", async function (el) {
+      this._.screens.welcomeScreen.reset();
       this._.screens.queryScreen.reset();
       this._.screens.slotsScreen.reset();
       this._.screens.goTo("welcomeScreen");
