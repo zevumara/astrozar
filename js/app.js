@@ -32,7 +32,7 @@ window.onload = function () {
       shufflingScreen: ShufflingScreen,
       slotsScreen: SlotsScreen,
       respondingScreen: RespondingScreen,
-      responseScreen: ResponseScreen,
+      answerScreen: AnswerScreen,
     },
     onload: async () => {
       const screenEffectsEl = document.querySelector(".screen-effects");
@@ -79,7 +79,7 @@ class Application {
         icosahedron: [],
         dodecahedron: [],
       },
-      throw: {
+      spread: {
         id: null,
         query: null,
         answer: null,
@@ -89,14 +89,6 @@ class Application {
       },
     };
     this.session = JSON.parse(localStorage.getItem("session")) || newSession;
-  }
-
-  _start() {
-    const url = new URL(window.location.href);
-    // share?
-    // restore?
-    // else
-    this.screens.goTo("welcomeScreen");
   }
 
   async _preloadFiles(files = []) {
@@ -131,6 +123,33 @@ class Application {
     this.files = loaded;
     if (this.debug) console.log("All files are loaded:", loaded);
     this.sound = new AudioManager(loaded);
+  }
+
+  async _start() {
+    const url = new URL(window.location.href);
+    const sharingId = url.searchParams.get("share");
+    if (sharingId) {
+      try {
+        const response = await fetch(`https://astrozar.vercel.app/share/${sharingId}`);
+        const result = await response.json();
+        this.session.spread.id = sharingId;
+        this.session.spread.query = result.query;
+        this.session.spread.answer = result.answer;
+        this.session.spread.octahedron = result.number.substr(0, 1);
+        this.session.spread.icosahedron = result.number.substr(2, 1);
+        this.session.spread.dodecahedron = result.number.substr(4, 1);
+        this.screens.answerScreen.prepare();
+        this.screens.goTo("answerScreen");
+        if (this.debug) console.log("Spread:", this.session.spread);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      this.screens.goTo("welcomeScreen");
+    }
+    // share?
+    // restore?
+    // else
     this.onload();
   }
 
@@ -243,7 +262,7 @@ class Screen {
     this.events();
     this.addListeners();
     this.tooltips();
-    this.show();
+    this.ready();
   }
 
   deactivate() {
@@ -256,7 +275,7 @@ class Screen {
 
   tooltips() {}
 
-  show() {}
+  ready() {}
 
   removeTooltips() {
     for (const tooltip in this.tooltip) {
@@ -410,7 +429,7 @@ class AudioManager {
         this.playing = sfx;
       }
     } else {
-      console.error(`The sound "${file}" has not been preloaded.`);
+      console.error(`Sound "${file}" has not been preloaded.`);
     }
   }
 
@@ -424,9 +443,10 @@ class AudioManager {
 
 class Tooltip {
   constructor(target, args = []) {
-    const { position, text, name, zIndex } = args;
+    const { position, text, name, zIndex, duration } = args;
     this.inactive = localStorage.getItem(name) || false;
     this.removeElement = false;
+    this.duration = duration || 0;
     this.position = position || "top";
     this.text = text || "Empty tooltip.";
     this.element = document.createElement("div");
@@ -441,6 +461,11 @@ class Tooltip {
     setTimeout(() => {
       this.element.classList.add("show");
     }, delay);
+    if (this.duration) {
+      setTimeout(() => {
+        this.hide();
+      }, this.duration);
+    }
   }
 
   hide(args = []) {
@@ -519,13 +544,21 @@ class QueryScreen extends Screen {
     super(app, selector);
     this.MIN_CHAR = 20;
     this.MAX_CHAR = 76;
+    this.queryEl = this.el.querySelector("._textareaQuery");
+  }
+
+  reset() {
+    this.queryEl.value = "";
+  }
+
+  ready() {
+    this.queryEl.focus();
   }
 
   async changeScreen() {
-    const queryEl = this.el.querySelector("._textareaQuery");
-    const characters = queryEl.value.length;
+    const characters = this.queryEl.value.length;
     if (characters > this.MIN_CHAR && characters < this.MAX_CHAR) {
-      queryEl.blur();
+      this.queryEl.blur();
       if ("virtualKeyboard" in navigator) {
         navigator.virtualKeyboard.hide();
       }
@@ -542,7 +575,7 @@ class QueryScreen extends Screen {
       this._.sound.play("key.ogg");
       if (characters > this.MIN_CHAR && characters <= this.MAX_CHAR) {
         btnEl.innerText = this._.translation.texts["concern_button"];
-        this._.session.throw.query = el.value;
+        this._.session.spread.query = el.value;
         if (btnEl.classList.contains("disabled")) {
           btnEl.classList.remove("disabled");
         }
@@ -550,7 +583,7 @@ class QueryScreen extends Screen {
         if (characters < this.MIN_CHAR) {
           btnEl.innerText = this._.translation.texts["expand_question"];
         }
-        this._.session.throw.query = null;
+        this._.session.spread.query = null;
         if (!btnEl.classList.contains("disabled")) {
           btnEl.classList.add("disabled");
         }
@@ -573,7 +606,7 @@ class ShufflingScreen extends Screen {
     super(app, selector);
   }
 
-  async show() {
+  async ready() {
     this.generateDecks();
     await this._.delay(1800);
     this._.screens.goTo("slotsScreen");
@@ -652,7 +685,30 @@ class SlotsScreen extends Screen {
     });
   }
 
-  show() {
+  reset() {
+    let slotEl = this.el.querySelector(".slot.octahedron");
+    slotEl.classList.remove("lock", "subtle-levitation");
+    slotEl.innerHTML = `
+    <div class="type animation rotating"></div>
+    <div class="order">1.</div>
+    <div class="_openModal"></div>`;
+
+    slotEl = this.el.querySelector(".slot.icosahedron");
+    slotEl.classList.remove("lock", "subtle-levitation");
+    slotEl.innerHTML = `
+    <div class="type animation rotating"></div>
+    <div class="order">2.</div>
+    <div class="_openModal"></div>`;
+
+    slotEl = this.el.querySelector(".slot.dodecahedron");
+    slotEl.classList.remove("lock", "subtle-levitation");
+    slotEl.innerHTML = `
+    <div class="type animation rotating"></div>
+    <div class="order">3.</div>
+    <div class="_openModal"></div>`;
+  }
+
+  ready() {
     this.tooltip["tap"].show(500);
   }
 
@@ -686,11 +742,11 @@ class SlotsScreen extends Screen {
   }
 
   async setSlot(slot, cardNumber) {
-    this._.session.throw[slot] = parseInt(cardNumber);
+    this._.session.spread[slot] = parseInt(cardNumber);
     if (
-      typeof this._.session.throw.octahedron === "number" &&
-      typeof this._.session.throw.icosahedron === "number" &&
-      typeof this._.session.throw.dodecahedron === "number"
+      typeof this._.session.spread.octahedron === "number" &&
+      typeof this._.session.spread.icosahedron === "number" &&
+      typeof this._.session.spread.dodecahedron === "number"
     ) {
       this.aleaIactaEst();
     }
@@ -946,22 +1002,23 @@ class RespondingScreen extends Screen {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          q: this._.session.throw.query,
-          c: this._.session.throw.octahedron,
-          t: this._.session.throw.icosahedron,
-          s: this._.session.throw.dodecahedron,
+          q: this._.session.spread.query,
+          c: this._.session.spread.octahedron,
+          t: this._.session.spread.icosahedron,
+          s: this._.session.spread.dodecahedron,
         }),
       });
       const result = await response.json();
-      this._.session.throw.id = result.id;
-      this._.session.throw.answer = result.answer;
+      this._.session.spread.id = result.id;
+      this._.session.spread.answer = result.answer;
+      if (this._.debug) console.log("ID:", result.id);
       return true;
     } catch (error) {
       return false;
     }
   }
 
-  async show() {
+  async ready() {
     const start = performance.now();
     const delay = 4500;
     let asnwerReceived = false;
@@ -974,26 +1031,63 @@ class RespondingScreen extends Screen {
     }
     const end = performance.now();
     await this._.delay(Math.max(delay - (end - start), 0));
-    if (this._.session.throw.id && this._.session.throw.answer) {
-      this._.screens.responseScreen.prepare();
+    if (this._.session.spread.id && this._.session.spread.answer) {
+      this._.screens.answerScreen.prepare();
       this._.sound.play("the-answer.ogg");
       await this._.delay(250);
-      this._.screens.goTo("responseScreen");
+      this._.screens.goTo("answerScreen");
     }
   }
 }
 
-class ResponseScreen extends Screen {
+class AnswerScreen extends Screen {
   constructor(app, selector) {
     super(app, selector);
+  }
+
+  tooltips() {
+    this.tooltip["shared"] = new Tooltip(this.el.querySelector(".container"), {
+      text: this._.translation.texts["tooltip_shared"],
+      position: "bottom",
+      duration: 4000,
+    });
   }
 
   prepare() {
     const queryEl = this.el.querySelector("h2");
     const answerEl = this.el.querySelector("h1 span");
     const numberEl = this.el.querySelector(".number h3");
-    queryEl.innerText = this._.session.throw.query;
-    answerEl.innerText = this._.session.throw.answer;
-    numberEl.innerText = `${this._.session.throw.octahedron} ${this._.session.throw.icosahedron} ${this._.session.throw.dodecahedron}`;
+    queryEl.innerText = this._.session.spread.query;
+    answerEl.innerText = this._.session.spread.answer;
+    numberEl.innerText = `${this._.session.spread.octahedron} ${this._.session.spread.icosahedron} ${this._.session.spread.dodecahedron}`;
+  }
+
+  events() {
+    this.addEvent("click", "._share", async function (el) {
+      const urlShare = `http://127.0.0.1:5500/?share=${this._.session.spread.id}`;
+      if (navigator.share) {
+        navigator
+          .share({
+            title: this._.translation.texts["sharing_look"],
+            text:
+              this._.translation.texts["sharing_question"] +
+              this._.session.spread.query +
+              "\n\n" +
+              this._.translation.texts["sharing_look"],
+            url: urlShare,
+          })
+          .then(() => {
+            if (this._.debug) console.log("Enlace compartido.");
+          });
+      } else {
+        navigator.clipboard.writeText(urlShare);
+        this.tooltip["shared"].show();
+      }
+    });
+    this.addEvent("click", "._retry", async function (el) {
+      this._.screens.queryScreen.reset();
+      this._.screens.slotsScreen.reset();
+      this._.screens.goTo("welcomeScreen");
+    });
   }
 }
