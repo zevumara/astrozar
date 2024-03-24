@@ -76,7 +76,7 @@ button.circular {
   background-color: #000;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 700;
-  font-size: 3.5cqh;
+  font-size: 3.4cqh;
   width: 46px;
   height: 46px;
   opacity: 0.5;
@@ -587,7 +587,6 @@ h1 {
   margin: 0;
   transform: rotate(0);
 }
-
 #responseScreen .container {
   display: flex;
   align-items: center;
@@ -624,6 +623,9 @@ h1 {
   list-style: none;
   display: inline-block;
   margin: 0 4px;
+}
+#responseScreen button.share {
+  font-size: 2.8cqh;
 }
 @media (orientation: landscape) {
   .animated-background div {

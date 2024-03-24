@@ -63,7 +63,7 @@ class Application {
     this._start();
   }
 
-  _config() {
+  async _config() {
     // Disable scroll with space
     document.addEventListener("keydown", (ev) => {
       if (ev.keyCode === 32 && ev.target.tagName !== "TEXTAREA") {
@@ -80,7 +80,9 @@ class Application {
         dodecahedron: [],
       },
       throw: {
+        id: null,
         query: null,
+        answer: null,
         octahedron: null,
         icosahedron: null,
         dodecahedron: null,
@@ -539,7 +541,7 @@ class QueryScreen extends Screen {
       const btnEl = this.el.querySelector("button");
       this._.sound.play("key.ogg");
       if (characters > this.MIN_CHAR && characters <= this.MAX_CHAR) {
-        btnEl.innerText = "Tirar cartas";
+        btnEl.innerText = this._.translation.texts["concern_button"];
         this._.session.throw.query = el.value;
         if (btnEl.classList.contains("disabled")) {
           btnEl.classList.remove("disabled");
@@ -577,8 +579,25 @@ class ShufflingScreen extends Screen {
     this._.screens.goTo("slotsScreen");
   }
 
+  shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
   generateDecks() {
+    const numbers = Array.from({ length: 10 }, (_, i) => i);
+
+    // Shuffling numbers
+    for (let i = numbers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+
     for (const deck in this._.session.deck) {
+      const numbers = this.shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const positions = [
         { x: "24px", y: "0" },
         { x: "-21px", y: "0" },
@@ -594,7 +613,7 @@ class ShufflingScreen extends Screen {
       for (let i = 0; i < 10; i++) {
         const rotation = Math.floor(Math.random() * 8 - 4);
         const card = {
-          number: i,
+          number: numbers.pop(),
           rotation: rotation,
           x: positions[i].x,
           y: positions[i].y,
@@ -669,9 +688,9 @@ class SlotsScreen extends Screen {
   async setSlot(slot, cardNumber) {
     this._.session.throw[slot] = parseInt(cardNumber);
     if (
-      this._.session.throw.octahedron &&
-      this._.session.throw.icosahedron &&
-      this._.session.throw.dodecahedron
+      typeof this._.session.throw.octahedron === "number" &&
+      typeof this._.session.throw.icosahedron === "number" &&
+      typeof this._.session.throw.dodecahedron === "number"
     ) {
       this.aleaIactaEst();
     }
@@ -919,11 +938,48 @@ class RespondingScreen extends Screen {
     super(app, selector);
   }
 
+  async getAnswer() {
+    try {
+      const response = await fetch("https://astrozar.vercel.app/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          q: this._.session.throw.query,
+          c: this._.session.throw.octahedron,
+          t: this._.session.throw.icosahedron,
+          s: this._.session.throw.dodecahedron,
+        }),
+      });
+      const result = await response.json();
+      this._.session.throw.id = result.id;
+      this._.session.throw.answer = result.answer;
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async show() {
-    await this._.delay(5500);
-    this._.sound.play("the-answer.ogg");
-    await this._.delay(250);
-    this._.screens.goTo("responseScreen");
+    const start = performance.now();
+    const delay = 4500;
+    let asnwerReceived = false;
+    let tryNumber = 0;
+    while (!asnwerReceived) {
+      tryNumber++;
+      if (this._.debug) console.log("Try number:", tryNumber);
+      asnwerReceived = await this.getAnswer();
+      await this._.delay(500);
+    }
+    const end = performance.now();
+    await this._.delay(Math.max(delay - (end - start), 0));
+    if (this._.session.throw.id && this._.session.throw.answer) {
+      this._.screens.responseScreen.prepare();
+      this._.sound.play("the-answer.ogg");
+      await this._.delay(250);
+      this._.screens.goTo("responseScreen");
+    }
   }
 }
 
@@ -932,5 +988,12 @@ class ResponseScreen extends Screen {
     super(app, selector);
   }
 
-  async show() {}
+  prepare() {
+    const queryEl = this.el.querySelector("h2");
+    const answerEl = this.el.querySelector("h1 span");
+    const numberEl = this.el.querySelector(".number h3");
+    queryEl.innerText = this._.session.throw.query;
+    answerEl.innerText = this._.session.throw.answer;
+    numberEl.innerText = `${this._.session.throw.octahedron} ${this._.session.throw.icosahedron} ${this._.session.throw.dodecahedron}`;
+  }
 }
