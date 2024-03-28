@@ -60,7 +60,6 @@ class Application {
     this._effects();
     this.files = [];
     this._preloadFiles(preload);
-    this._start();
   }
 
   async _config() {
@@ -89,6 +88,11 @@ class Application {
       },
     };
     this.session = JSON.parse(localStorage.getItem("session")) || newSession;
+  }
+  f;
+
+  saveSession() {
+    localStorage.setItem("session", JSON.stringify(this.session));
   }
 
   async _preloadFiles(files = []) {
@@ -123,11 +127,13 @@ class Application {
     this.files = loaded;
     if (this.debug) console.log("All files are loaded:", loaded);
     this.sound = new AudioManager(loaded);
+    this._start();
   }
 
   async _start() {
     const url = new URL(window.location.href);
     const sharingId = url.searchParams.get("share");
+    const spreadPending = JSON.parse(localStorage.getItem("session"));
     if (sharingId) {
       try {
         const response = await fetch(`https://astrozar.vercel.app/share/${sharingId}`);
@@ -144,12 +150,12 @@ class Application {
       } catch (error) {
         console.error("Error:", error);
       }
+    } else if (spreadPending) {
+      this.screens.slotsScreen.restoreSession();
+      this.screens.goTo("slotsScreen");
     } else {
       this.screens.goTo("welcomeScreen");
     }
-    // share?
-    // restore?
-    // else
     this.onload();
   }
 
@@ -444,6 +450,7 @@ class AudioManager {
 class Tooltip {
   constructor(target, args = []) {
     const { position, text, name, zIndex, duration } = args;
+    this.name = name || null;
     this.inactive = localStorage.getItem(name) || false;
     this.removeElement = false;
     this.duration = duration || 0;
@@ -460,6 +467,7 @@ class Tooltip {
     if (this.inactive || this.element.classList.contains("show")) return;
     setTimeout(() => {
       this.element.classList.add("show");
+      if (this.name) localStorage.setItem(this.name, 1);
     }, delay);
     if (this.duration) {
       setTimeout(() => {
@@ -678,14 +686,17 @@ class SlotsScreen extends Screen {
   tooltips() {
     this.tooltip["tap"] = new Tooltip(this.el.querySelector(".container"), {
       text: this._.translation.htmls["tooltip_tap"],
+      name: "tooltip_tap",
     });
     this.tooltip["swipe"] = new Tooltip(this.el.querySelector(".modal"), {
       text: this._.translation.htmls["tooltip_swipe"],
+      name: "tooltip_swipe",
     });
     this.tooltip["hold"] = new Tooltip(this.el.querySelector(".modal"), {
       text: this._.translation.htmls["tooltip_hold"],
       position: "bottom",
       zIndex: 4,
+      name: "tooltip_hold",
     });
   }
 
@@ -745,18 +756,26 @@ class SlotsScreen extends Screen {
     });
   }
 
-  async setSlot(slot, cardNumber) {
+  restoreSession() {
+    this.setSlot("octahedron", this._.session.spread.octahedron);
+    this.setSlot("icosahedron", this._.session.spread.icosahedron);
+    this.setSlot("dodecahedron", this._.session.spread.dodecahedron);
+    this.aleaIactaEst();
+  }
+
+  async saveSlot(slot, cardNumber) {
     this._.session.spread[slot] = parseInt(cardNumber);
     if (
       typeof this._.session.spread.octahedron === "number" &&
       typeof this._.session.spread.icosahedron === "number" &&
       typeof this._.session.spread.dodecahedron === "number"
     ) {
+      this._.saveSession();
       this.aleaIactaEst();
     }
   }
 
-  async aleaIactaEst(restoringSession = false) {
+  async aleaIactaEst() {
     await this._.delay(250);
     await this.showFlashEffect();
     this.tooltip["tap"].hide({ remove: true });
@@ -825,7 +844,6 @@ class SlotsScreen extends Screen {
     this.selectedCardEl.classList.remove("transition");
     this.selectedCardEl.classList.add("_selected", "animation", "scale-card");
     const closeButtonEl = document.createElement("button");
-    closeButtonEl.innerText = "↩";
     closeButtonEl.classList.add("circular", "_closeModal");
     container.appendChild(closeButtonEl);
   }
@@ -860,7 +878,7 @@ class SlotsScreen extends Screen {
     deckEl.classList.remove("collapse");
     selectedCardEl.classList.add("hide");
     cardFrontEl.classList.add("hide");
-    cardBackEl.classList.remove("hide");
+    cardBackEl.classList.remove("hide", "octahedron", "icosahedron", "dodecahedron");
   }
 
   createCard(number, deck) {
@@ -901,6 +919,13 @@ class SlotsScreen extends Screen {
     this.cancelProgressBar();
   }
 
+  setSlot(slot, number) {
+    const slotEl = this.el.querySelector(".slot." + slot);
+    const card = this.createCard(number, slot);
+    slotEl.classList.add("lock", "subtle-levitation");
+    slotEl.innerHTML = card;
+  }
+
   async cardSelected() {
     this.tooltip["swipe"].hide({ remove: true });
     this.tooltip["hold"].hide({ remove: true });
@@ -908,7 +933,6 @@ class SlotsScreen extends Screen {
     const selectedCardEl = this.el.querySelector("#selectedCard");
     const cardBackEl = selectedCardEl.querySelector("#selected_card_back");
     const cardFrontEl = selectedCardEl.querySelector("#selected_card_front");
-    const slotEl = this.el.querySelector(".slot." + this.slotSelected);
     const cardBackTypeEl = cardBackEl.querySelector(".type");
     const cardNumber = this.selectedCardEl.dataset.number;
     const card = this.createCard(cardNumber, this.slotSelected);
@@ -926,9 +950,8 @@ class SlotsScreen extends Screen {
     await this.playAnimation("#selected_card_front", "flip-in-y", 1000);
     await this._.delay(500);
     await this.playAnimation("#selected_card_front", "zoom-out-up", 800);
-    slotEl.classList.add("lock", "subtle-levitation");
-    slotEl.innerHTML = card;
     this.setSlot(this.slotSelected, cardNumber);
+    this.saveSlot(this.slotSelected, cardNumber);
     this.hideModal();
   }
 
@@ -1057,6 +1080,10 @@ class AnswerScreen extends Screen {
     });
   }
 
+  ready() {
+    localStorage.removeItem("session");
+  }
+
   prepare() {
     const queryEl = this.el.querySelector("h2");
     const answerEl = this.el.querySelector("h1 span");
@@ -1064,12 +1091,6 @@ class AnswerScreen extends Screen {
     queryEl.innerText = this._.session.spread.query;
     answerEl.innerText = this._.session.spread.answer;
     numberEl.innerText = `${this._.session.spread.octahedron} ${this._.session.spread.icosahedron} ${this._.session.spread.dodecahedron}`;
-  }
-
-  ready() {
-    localStorage.removeItem("session");
-    this._.newSession();
-    if (this._.debug) console.log("Session:", this._.session);
   }
 
   events() {
@@ -1095,6 +1116,7 @@ class AnswerScreen extends Screen {
       }
     });
     this.addEvent("click", "._retry", async function (el) {
+      this._.newSession();
       this._.screens.welcomeScreen.reset();
       this._.screens.queryScreen.reset();
       this._.screens.slotsScreen.reset();

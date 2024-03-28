@@ -21,7 +21,6 @@ body {
   background-image: url(../img/background.webp);
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
   background-attachment: fixed;
   text-wrap: balance;
   text-align: center;
@@ -83,6 +82,9 @@ button.circular {
   margin-bottom: 3cqh;
   align-self: flex-end;
   transition: opacity 0.2s linear;
+  background-repeat: no-repeat;
+  background-size: 45%;
+  background-position: 50% 50%;
 }
 button:hover {
   opacity: 1;
@@ -330,7 +332,6 @@ h1 {
   border: 1px solid var(--color4);
   text-shadow: 0px 0px 12px black;
   font-size: 4.6cqh;
-  color: var(--color2);
   text-wrap: stable;
 }
 .screen.loading .container {
@@ -398,9 +399,13 @@ h1 {
 #slotsScreen .slot:hover .type {
   opacity: 1;
 }
-#slotsScreen .slot.lock {
+#slotsScreen .slot.lock,
+#slotsScreen .slot:hover.lock {
   border: none;
   box-shadow: 0 25px 45px -14px rgba(0, 0, 0, 0.9);
+}
+#slotsScreen .slot:hover.lock .animation {
+  animation-play-state: running;
 }
 #slotsScreen .slot.lock.done {
   box-shadow: -20px -20px 70px -25px var(--color1), 20px 20px 60px -25px var(--color2),
@@ -579,6 +584,9 @@ h1 {
   height: 100%;
   cursor: default;
 }
+#slotsScreen button._closeModal {
+  background-image: url(../img/icon-close.webp);
+}
 .transition {
   transition: all 0.3s ease !important;
 }
@@ -587,6 +595,7 @@ h1 {
   margin: 0;
   transform: rotate(0);
 }
+/* Answer screen */
 #answerScreen .container {
   display: flex;
   align-items: center;
@@ -625,12 +634,95 @@ h1 {
   margin: 0 4px;
 }
 #answerScreen button._share {
-  font-size: 2.8cqh;
+  background-image: url(../img/icon-share.webp);
+  background-position: 45% 50%;
+}
+#answerScreen button._retry {
+  background-image: url(../img/icon-reload.webp);
 }
 @media (orientation: landscape) {
   .animated-background div {
     background-image: url(../img/stars-landscape.webp);
   }
-  @media screen and (max-width: 640px) {
+  @media screen and (min-width: 960px) {
+    .screen-effects .spinner {
+      width: 80px;
+      height: 80px;
+    }
+    /* Welcome screen */
+    #welcomeScreen .astrozarImage {
+      height: 50%;
+    }
+    #welcomeScreen img {
+      width: 66cqh;
+    }
+    #welcomeScreen .welcomeText {
+      height: 50%;
+      padding-top: 4.5%;
+    }
+    button.main {
+      width: auto;
+      padding: 1% 4% 1.2% 4%;
+      font-size: 4.5cqh;
+    }
+    h1 {
+      font-size: 6.6cqh;
+    }
+    #welcomeScreen .welcomeText p {
+      font-size: 4.1cqh;
+      margin-bottom: 2.2cqh;
+      max-width: 80%;
+    }
+    /* Query screen */
+    #queryScreen h1 {
+      font-size: 6.1cqh;
+    }
+    #queryScreen textarea {
+      width: 85%;
+      padding: 8% 10% 10% 10%;
+      font-size: 5.6cqh;
+    }
+    .screen.loading .container h1 {
+      font-size: 6.1cqh;
+    }
+    .tooltip {
+      max-width: 540px;
+    }
+    /* Slots screen */
+    #slotsScreen .slot {
+      width: 33cqh;
+      height: 57cqh;
+      border: 12px solid rgba(140, 0, 255, 0.3);
+      box-shadow: -20px -20px 70px -25px var(--color1), 20px 20px 60px -25px var(--color2),
+        1px 1px 1px 1px var(--color1), 1px 1px 1px 1px var(--color2),
+        0 0 3px 4px rgba(255, 255, 255, 0.3), 0 55px 135px -20px rgba(0, 0, 0, 0.5),
+        inset rgba(0, 0, 0, 1) 0 0 150px 2px;
+    }
+    #slotsScreen .slot:hover {
+      border: 12px solid rgba(140, 0, 255, 0.7);
+    }
+    #slotsScreen .slot .order {
+      font-size: 3.4cqh;
+    }
+    #slotsScreen .slot.lock .card.front .name,
+    #slotsScreen .slot.lock .card.front .number p {
+      font-size: 3.1cqh;
+      line-height: 3.5cqh;
+    }
+    /* Answer screen */
+    #answerScreen h2 {
+      font-size: 4cqh;
+    }
+    #answerScreen h1 {
+      font-size: 5.6cqh;
+      max-width: 80%;
+    }
+    #answerScreen .number p {
+      font-size: 2.7cqh;
+      opacity: 0.8;
+    }
+    #answerScreen .number h3 {
+      font-size: 8cqh;
+    }
   }
 }
