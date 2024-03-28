@@ -516,7 +516,7 @@ h1 {
 }
 #slotsScreen .card.front .inner {
   width: 80%;
-  height: 86%;
+  height: 88%;
   border-radius: 3px;
   border: 1px solid rgba(140, 0, 255, 0.5);
   display: flex;
@@ -690,13 +690,13 @@ h1 {
     }
     /* Slots screen */
     #slotsScreen .slot {
-      width: 33cqh;
-      height: 57cqh;
+      width: 27cqh;
+      height: 49cqh;
       border: 12px solid rgba(140, 0, 255, 0.3);
       box-shadow: -20px -20px 70px -25px var(--color1), 20px 20px 60px -25px var(--color2),
         1px 1px 1px 1px var(--color1), 1px 1px 1px 1px var(--color2),
         0 0 3px 4px rgba(255, 255, 255, 0.3), 0 55px 135px -20px rgba(0, 0, 0, 0.5),
-        inset rgba(0, 0, 0, 1) 0 0 150px 2px;
+        inset rgba(0, 0, 0, 1) 0 0 500px 2px;
     }
     #slotsScreen .slot:hover {
       border: 12px solid rgba(140, 0, 255, 0.7);
@@ -704,10 +704,13 @@ h1 {
     #slotsScreen .slot .order {
       font-size: 3.4cqh;
     }
-    #slotsScreen .slot.lock .card.front .name,
+    #slotsScreen .slot.lock .card.front .name {
+      font-size: 2.5cqh;
+      line-height: 3cqh;
+    }
     #slotsScreen .slot.lock .card.front .number p {
-      font-size: 3.1cqh;
-      line-height: 3.5cqh;
+      font-size: 2.5cqh;
+      line-height: 3.2cqh;
     }
     /* Answer screen */
     #answerScreen h2 {
