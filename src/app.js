@@ -1111,7 +1111,7 @@ class AnswerScreen extends Screen {
 
   events() {
     this.addEvent("click", "._share", async function (el) {
-      const urlShare = `http://127.0.0.1:5500/?share=${this._.session.spread.id}`;
+      const urlShare = `https://astroz.ar/?share=${this._.session.spread.id}`;
       if (navigator.share) {
         navigator
           .share({
