@@ -2,7 +2,7 @@
   "text": {
     "title": "Astrozar — Consultor Cósmico",
     "welcome_title": "Saludos, alma.",
-    "welcome_button": "Consultame algo Λ",
+    "welcome_button": "Λ",
     "concern_title": "¿Qué te concierne respecto al futuro?",
     "concern_button": "Tirar cartas",
     "tooltip_hold": "Una vez elegida, mantené presionada la carta por varios segundos.",
@@ -25,41 +25,41 @@
     "concern_placeholder": "Escribí acá"
   },
   "cards": {
-    "triangle": [
-      "Amazona",
-      "Azteca",
-      "Gaucho",
-      "Mohicano",
-      "Ninja",
-      "Rajput",
-      "Samurái",
-      "Espartano",
-      "Vikingo",
-      "Zulu"
+    "octahedron": [
+      "El Bosque Profundo",
+      "El Espejo Negro",
+      "La Niebla Espesa",
+      "El Bastón Místico",
+      "El Portal Abierto",
+      "La Torre Hermética",
+      "La Llama Eterna",
+      "La Antorcha Boreal",
+      "La Espada Luminosa",
+      "El Tesoro Olvidado"
     ],
-    "circle": [
-      "Perseo",
-      "Andrómeda",
-      "Orión",
-      "Pegaso",
-      "Centaurus",
-      "Fénix",
-      "Lacerta",
-      "Cefeo",
-      "Cygnus",
-      "Ofiuco"
+    "icosahedron": [
+      "La Sombra Cenicienta",
+      "La Rosa Carmesí",
+      "El Libro Prohibido",
+      "El Sendero Revelado",
+      "La Cueva Oculta",
+      "La Poción Iridiscente",
+      "La Daga Venenosa",
+      "La Luna Roja",
+      "La Lámpara Infalible",
+      "La Llave Dorada"
     ],
-    "square": [
-      "Tortuga",
-      "Delfín",
-      "Cóndor",
-      "Unicornio",
-      "Carpincho",
-      "Dragón",
-      "Búho",
-      "Tigre",
-      "Serpiente",
-      "Oso"
+    "dodecahedron": [
+      "La Bestia Ardiente",
+      "El Secreto Latente",
+      "El Poncho Errante",
+      "La Estrella Sideral",
+      "El Vacío Ancestral",
+      "La Máscara Partida",
+      "Las Ruinas Sagradas",
+      "La Campana Silente",
+      "La Dimensión Oscura",
+      "La Flor Nocturna"
     ]
   }
 }

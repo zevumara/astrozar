@@ -2,7 +2,7 @@
   "text": {
     "title": "Astrozar — Cosmic Consultant",
     "welcome_title": "Greetings, soul.",
-    "welcome_button": "Ask me something Λ",
+    "welcome_button": "Λ",
     "concern_title": "What concerns you regarding the future?",
     "concern_button": "Draw cards",
     "tooltip_hold": "Once chosen, hold down the card for several seconds.",
@@ -25,41 +25,41 @@
     "concern_placeholder": "Type here"
   },
   "cards": {
-    "triangle": [
-      "Amazona",
-      "Azteca",
-      "Gaucho",
-      "Mohicano",
-      "Ninja",
-      "Rajput",
-      "Samurái",
-      "Espartano",
-      "Vikingo",
-      "Zulu"
+    "octahedron": [
+      "The Deep Forest",
+      "The Black Mirror",
+      "The Thick Mist",
+      "The Mystic Staff",
+      "The Open Portal",
+      "The Hermetic Tower",
+      "The Eternal Flame",
+      "The Boreal Torch",
+      "The Luminous Sword",
+      "The Forgotten Treasure"
     ],
-    "circle": [
-      "Perseo",
-      "Andrómeda",
-      "Orión",
-      "Pegaso",
-      "Centaurus",
-      "Fénix",
-      "Lacerta",
-      "Cefeo",
-      "Cygnus",
-      "Ofiuco"
+    "icosahedron": [
+      "The Ashen Shadow",
+      "The Crimson Rose",
+      "The Forbidden Book",
+      "The Revealed Path",
+      "The Hidden Cave",
+      "The Iridescent Potion",
+      "The Poisonous Dagger",
+      "The Red Moon",
+      "The Unfailing Lamp",
+      "The Golden Key"
     ],
-    "square": [
-      "Tortuga",
-      "Delfín",
-      "Cóndor",
-      "Unicornio",
-      "Carpincho",
-      "Dragón",
-      "Búho",
-      "Tigre",
-      "Serpiente",
-      "Oso"
+    "dodecahedron": [
+      "The Burning Beast",
+      "The Latent Secret",
+      "The Wandering Poncho",
+      "The Starry Star",
+      "The Ancestral Void",
+      "The Broken Mask",
+      "The Sacred Ruins",
+      "The Silent Bell",
+      "The Dark Dimension",
+      "The Nocturnal Flower"
     ]
   }
 }

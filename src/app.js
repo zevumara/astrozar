@@ -96,6 +96,11 @@ class Application {
   }
 
   async _preloadFiles(files = []) {
+    for (let i = 0; i < 9; i++) {
+      files.push(`octahedron-${i}.webp`);
+      files.push(`icosahedron-${i}.webp`);
+      files.push(`dodecahedron-${i}.webp`);
+    }
     await this.translation.load();
     const loaded = {};
     const loadFiles = files.map(async (file) => {
@@ -136,7 +141,7 @@ class Application {
     const spreadPending = JSON.parse(localStorage.getItem("session"));
     if (sharingId) {
       try {
-        const response = await fetch(`https://astrozar.vercel.app/share/${sharingId}`);
+        const response = await fetch(`/share/${sharingId}`);
         const result = await response.json();
         this.session.spread.id = sharingId;
         this.session.spread.query = result.query;
@@ -500,7 +505,7 @@ class Translation {
     this.cards = null;
   }
   async load() {
-    const response = await fetch(`lang/${this.language}.json`);
+    const response = await fetch(`/lang/${this.language}.json`);
     const file = await response.json();
     this.texts = file.text;
     this.htmls = file.html;
@@ -883,13 +888,13 @@ class SlotsScreen extends Screen {
 
   createCard(number, deck) {
     const cardContent = `
-      <div class="card front ${deck}">
+      <div class="card front ${deck}" style="background-image: url(/img/${deck}-${number}.webp)">
         <div class="inner">
           <div class="number">
             <p>${number}</p>
             <div class="animation rotating"></div>
           </div>
-          <div class="name">La Puerta de los Sueños</div>
+          <div class="name">${this._.translation.cards[deck][number]}</div>
         </div>
       </div>
     `;
@@ -1023,24 +1028,35 @@ class RespondingScreen extends Screen {
 
   async getAnswer() {
     try {
-      const response = await fetch("https://astrozar.vercel.app/query", {
+      const response = await fetch("/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           q: this._.session.spread.query,
-          c: this._.session.spread.octahedron,
-          t: this._.session.spread.icosahedron,
-          s: this._.session.spread.dodecahedron,
+          o: this._.session.spread.octahedron,
+          i: this._.session.spread.icosahedron,
+          d: this._.session.spread.dodecahedron,
         }),
       });
+      if (!response.ok) {
+        console.log("Error:", `Request failed with status ${response.status}.`);
+        return false;
+      }
       const result = await response.json();
+      if (result.error) {
+        console.log("Error:", result.error);
+        return false;
+      }
       this._.session.spread.id = result.id;
       this._.session.spread.answer = result.answer;
-      if (this._.debug) console.log("ID:", result.id);
+      if (this._.debug) {
+        console.log("ID:", result.id);
+      }
       return true;
     } catch (error) {
+      console.log("Error:", error);
       return false;
     }
   }
@@ -1050,7 +1066,7 @@ class RespondingScreen extends Screen {
     const delay = 4500;
     let asnwerReceived = false;
     let tryNumber = 0;
-    while (!asnwerReceived) {
+    while (!asnwerReceived && tryNumber < 10) {
       tryNumber++;
       if (this._.debug) console.log("Try number:", tryNumber);
       asnwerReceived = await this.getAnswer();
