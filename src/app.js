@@ -981,7 +981,7 @@ class SlotsScreen extends Screen {
     cardFrontEl.classList.remove("hide");
     this._.sound.play("reveal.ogg");
     await this.playAnimation("#selected_card_front", "flip-in-y", 1000);
-    await this._.delay(1500);
+    await this._.delay(2000);
     await this.playAnimation("#selected_card_front", "zoom-out-up", 800);
     this.setSlot(this.slotSelected, cardNumber);
     this.saveSlot(this.slotSelected, cardNumber);
