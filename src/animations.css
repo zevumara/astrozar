@@ -223,14 +223,17 @@
 }
 @keyframes rotating {
   0% {
-    transform: rotate(0deg);
+    transform: scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: scale(0.9) rotate(360deg);
   }
 }
 .animation.rotating {
-  animation: rotating 5s linear infinite;
+  animation: rotating 4s linear infinite;
 }
 @keyframes beat {
   0% {
@@ -242,6 +245,9 @@
   100% {
     transform: scale(1) translateX(-50%);
   }
+}
+.animation.beat {
+  animation: beat 5s linear infinite;
 }
 @keyframes blinker {
   from {

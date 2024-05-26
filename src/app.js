@@ -599,8 +599,10 @@ class QueryScreen extends Screen {
   }
 
   async changeScreen() {
-    const characters = this.queryEl.value.length;
-    if (characters > this.MIN_CHAR && characters < this.MAX_CHAR) {
+    const value = this.queryEl.value;
+    const characters = value.length;
+    this.queryEl.value = value.slice(0, this.MAX_CHAR);
+    if (characters > this.MIN_CHAR) {
       this.queryEl.blur();
       if ("virtualKeyboard" in navigator) {
         navigator.virtualKeyboard.hide();
@@ -979,7 +981,7 @@ class SlotsScreen extends Screen {
     cardFrontEl.classList.remove("hide");
     this._.sound.play("reveal.ogg");
     await this.playAnimation("#selected_card_front", "flip-in-y", 1000);
-    await this._.delay(500);
+    await this._.delay(1500);
     await this.playAnimation("#selected_card_front", "zoom-out-up", 800);
     this.setSlot(this.slotSelected, cardNumber);
     this.saveSlot(this.slotSelected, cardNumber);
