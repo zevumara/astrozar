@@ -221,7 +221,7 @@
   animation-name: zoom-out-up;
   transform-origin: center bottom;
 }
-@keyframes rotating {
+@keyframes rotating-and-scaling {
   0% {
     transform: scale(0.7) rotate(0deg);
   }
@@ -232,8 +232,19 @@
     transform: scale(0.7) rotate(360deg);
   }
 }
+.animation.rotating-and-scaling {
+  animation: rotating-and-scaling 3s ease infinite;
+}
+@keyframes rotating {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .animation.rotating {
-  animation: rotating 3.5s linear infinite;
+  animation: rotating 5s linear infinite;
 }
 @keyframes beat {
   0% {

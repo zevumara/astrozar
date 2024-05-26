@@ -453,10 +453,10 @@ h1 {
 #slotsScreen .card.back.dodecahedron .inner::before {
   background-image: url(../img/dodecahedron.webp);
 }
-#slotsScreen .slot.icosahedron .animation.rotating {
+#slotsScreen .slot.icosahedron .animation.rotating-and-scaling {
   animation-delay: 0.5s;
 }
-#slotsScreen .slot.dodecahedron .animation.rotating {
+#slotsScreen .slot.dodecahedron .animation.rotating-and-scaling {
   animation-delay: 1s;
 }
 #slotsScreen .card.back .inner {
