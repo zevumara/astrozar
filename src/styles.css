@@ -39,7 +39,7 @@ strong {
 }
 main.screens {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   z-index: 1;
   position: fixed;
@@ -52,7 +52,7 @@ main.screens .display {
   flex-direction: column;
 }
 main.screens .screen {
-  height: 100vh;
+  height: 100dvh;
   scroll-snap-align: start;
 }
 button.main {
@@ -150,7 +150,7 @@ h1 {
 }
 .screen-effects {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
@@ -158,7 +158,7 @@ h1 {
 }
 .screen-effects .loader {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   position: fixed;
   background-color: black;
   top: 0;
@@ -168,7 +168,7 @@ h1 {
 }
 .screen-effects .loader .container {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +199,7 @@ h1 {
 }
 .screen-effects .flash {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   z-index: 9999;
   background-color: rgba(255, 0, 238, 0.4);
   animation: fade-in 0.1s linear infinite;
@@ -215,7 +215,7 @@ h1 {
 }
 .animated-background {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
@@ -450,19 +450,6 @@ h1 {
 #slotsScreen .card.back.dodecahedron .inner::before {
   background-image: url(../img/dodecahedron.webp);
 }
-#slotsScreen .card.back .inner::before {
-  width: 80%;
-  height: 86%;
-  background-position: center;
-  background-size: cover;
-  opacity: 0.05;
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 0;
-  bottom: 0;
-  top: 7%;
-}
 #slotsScreen .card.back .inner {
   width: 80%;
   height: 86%;
@@ -494,31 +481,11 @@ h1 {
   padding: 3px 12px 9px 12px;
   border-radius: 100%;
 }
-#slotsScreen .card:before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  background-image: url(../img/sparkles.webp),
-    linear-gradient(
-      125deg,
-      #ff008450 15%,
-      #fca40040 30%,
-      #ffff0030 40%,
-      #00ff8a20 60%,
-      #00cfff40 70%,
-      #cc4cfa50 85%
-    );
-  background-size: 130%;
-  opacity: 0.1;
-}
 #slotsScreen .card.front .inner {
   width: 80%;
   height: 88%;
   border-radius: 3px;
-  border: 1px solid rgba(140, 0, 255, 0.5);
+  border: 2px solid rgba(140, 0, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -526,7 +493,7 @@ h1 {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 20px 0 black;
 }
 #slotsScreen .card.front .number {
   font-size: 3.1cqh;
@@ -645,6 +612,40 @@ h1 {
     background-image: url(../img/stars-landscape.webp);
   }
   @media screen and (min-width: 960px) {
+    #slotsScreen .card:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      background-image: url(../img/sparkles.webp),
+        linear-gradient(
+          125deg,
+          #ff008450 15%,
+          #fca40040 30%,
+          #ffff0030 40%,
+          #00ff8a20 60%,
+          #00cfff40 70%,
+          #cc4cfa50 85%
+        );
+      background-size: 130%;
+      opacity: 0.1;
+    }
+
+    #slotsScreen .card.back .inner::before {
+      width: 80%;
+      height: 86%;
+      background-position: center;
+      background-size: cover;
+      opacity: 0.05;
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 0;
+      bottom: 0;
+      top: 7%;
+    }
     .screen-effects .spinner {
       width: 80px;
       height: 80px;
@@ -728,4 +729,11 @@ h1 {
       font-size: 8cqh;
     }
   }
+}
+#debug {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  padding: 20px;
+  z-index: 99;
 }

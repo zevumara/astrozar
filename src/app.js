@@ -1,6 +1,6 @@
 window.onload = function () {
-  new Application({
-    debug: true,
+  window.astrozar = new Application({
+    debug: false,
     preload: [
       "the-answer.ogg",
       "alea-iacta-est.ogg",
@@ -149,14 +149,14 @@ class Application {
         this.session.spread.octahedron = result.number.substr(0, 1);
         this.session.spread.icosahedron = result.number.substr(2, 1);
         this.session.spread.dodecahedron = result.number.substr(4, 1);
-        this.screens.answerScreen.prepare();
+        this.screens.list.answerScreen.prepare();
         this.screens.goTo("answerScreen");
         if (this.debug) console.log("Spread:", this.session.spread);
       } catch (error) {
         console.error("Error:", error);
       }
     } else if (spreadPending) {
-      this.screens.slotsScreen.restoreSession();
+      this.screens.list.slotsScreen.restoreSession();
       this.screens.goTo("slotsScreen");
     } else {
       this.screens.goTo("welcomeScreen");
@@ -167,15 +167,19 @@ class Application {
   _debug(active) {
     if (!active) return;
     this.debug = true;
+    this.debugElement = document.querySelector("#debug");
+    this.debugElement.classList.remove("hide");
     console.log("-- DEBUG MODE --");
   }
 
   _effects() {
-    // Según el tamaño de la pantalla?
-    // textEffects
     const animatedBackgroundElement = document.querySelector(".animated-background");
-    animatedBackgroundElement.classList.remove("hide");
-    if (this.debug) console.log("Effects are activated.");
+    if (window.innerWidth > 800) {
+      animatedBackgroundElement.classList.remove("hide");
+      if (this.debug) console.log("Effects are activated.");
+    } else {
+      animatedBackgroundElement.remove();
+    }
   }
 
   delay(ms, callback = () => {}) {
@@ -198,6 +202,7 @@ class Screens {
     this.currentScreen = null;
     this.targetScreen = null;
     this.isTransitioning = false;
+    this.list = {};
     this.scrollElement.addEventListener("scroll", this.scrollHandler.bind(this));
     window.addEventListener("resize", this.resizeHandler.bind(this));
   }
@@ -206,23 +211,23 @@ class Screens {
     const screensElements = document.querySelectorAll("section.screen");
     screensElements.forEach((el) => {
       const screenClass = screens[el.id] || Screen;
-      this[el.id] = new screenClass(app, el.id);
+      this.list[el.id] = new screenClass(app, el.id);
     });
   }
 
   goTo(screen) {
     return new Promise((resolve) => {
-      if (this.isTransitioning || !this[screen] || !this[screen].el) return resolve();
+      if (this.isTransitioning || !this.list[screen] || !this.list[screen].el) return resolve();
       // First time
       if (!this.currentScreen) {
-        this.currentScreen = this[screen];
+        this.currentScreen = this.list[screen];
         this.currentScreen.activate();
         this.scrollElement.scrollTop = this.currentScreen.el.offsetTop;
         return resolve();
       }
       // Moving to another screen
       this.currentScreen.deactivate();
-      this.targetScreen = this[screen];
+      this.targetScreen = this.list[screen];
       this.isTransitioning = true;
       //this.scrollElement.scrollTop = this.targetScreen.el.offsetTop;
       this.targetScreen.el.scrollIntoView({ behavior: "smooth" });
@@ -239,7 +244,8 @@ class Screens {
 
   scrollHandler() {
     if (!this.targetScreen?.el) return;
-    if (this.scrollElement.scrollTop === this.targetScreen.el.offsetTop) {
+    let scrollTop = Math.ceil(this.scrollElement.scrollTop);
+    if (scrollTop === this.targetScreen.el.offsetTop) {
       this.currentScreen = this.targetScreen;
       this.targetScreen = null;
       this.isTransitioning = false;
@@ -251,6 +257,14 @@ class Screens {
     if (this.isTransitioning || !this.currentScreen?.el) return;
     if (this.scrollElement.scrollTop != this.currentScreen.el.offsetTop) {
       this.scrollElement.scrollTop = this.currentScreen.el.offsetTop;
+    }
+  }
+
+  updateViewport() {
+    this.scrollElement.style.height = window.innerHeight + "px";
+    this.scrollElement.style.width = window.innerWidth + "px";
+    for (screen in this.list) {
+      this.list[screen].updateViewport();
     }
   }
 }
@@ -267,6 +281,7 @@ class Screen {
     };
     this.boundHandler = this.handler.bind(this);
     this.tooltip = {};
+    this.updateViewport();
   }
 
   activate() {
@@ -402,6 +417,11 @@ class Screen {
   hideModal() {
     const modalEl = document.querySelector(".modal");
     modalEl.classList.add("hide");
+  }
+
+  updateViewport() {
+    this.el.style.height = window.innerHeight + "px";
+    this.el.style.width = window.innerWidth + "px";
   }
 }
 
@@ -586,7 +606,7 @@ class QueryScreen extends Screen {
   }
 
   events() {
-    this.addEvent("input", "._textareaQuery", async function (el) {
+    this.addEvent("input", "._textareaQuery", function (el) {
       const characters = el.value.length;
       const btnEl = this.el.querySelector("button");
       this._.sound.play("key.ogg");
@@ -612,7 +632,7 @@ class QueryScreen extends Screen {
         this.changeScreen();
       }
     });
-    this.addEvent("click", "._changeScreen", async function (el) {
+    this.addEvent("click", "._changeScreen", function (el) {
       this.changeScreen();
     });
   }
@@ -974,7 +994,7 @@ class SlotsScreen extends Screen {
 
   onMove(event) {
     const currentX = event.pageX ?? event.touches[0].pageX;
-    this.dragDistance = currentX - this.startX;
+    this.dragDistance = currentX - Math.floor(this.startX);
     if (this.dragDistance === 0) return;
     this.selectedCardEl.classList.remove("transition");
     this.isAnimating = true;
@@ -1075,7 +1095,7 @@ class RespondingScreen extends Screen {
     const end = performance.now();
     await this._.delay(Math.max(delay - (end - start), 0));
     if (this._.session.spread.id && this._.session.spread.answer) {
-      this._.screens.answerScreen.prepare();
+      this._.screens.list.answerScreen.prepare();
       this._.sound.play("the-answer.ogg");
       await this._.delay(250);
       this._.screens.goTo("answerScreen");
@@ -1133,10 +1153,14 @@ class AnswerScreen extends Screen {
     });
     this.addEvent("click", "._retry", async function (el) {
       this._.newSession();
-      this._.screens.welcomeScreen.reset();
-      this._.screens.queryScreen.reset();
-      this._.screens.slotsScreen.reset();
+      this._.screens.list.welcomeScreen.reset();
+      this._.screens.list.queryScreen.reset();
+      this._.screens.list.slotsScreen.reset();
       this._.screens.goTo("welcomeScreen");
     });
   }
 }
+
+window.onresize = function () {
+  window.astrozar.screens.updateViewport();
+};
