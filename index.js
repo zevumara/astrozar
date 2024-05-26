@@ -67,17 +67,18 @@ app.post(
     validator.body("o").isInt({ min: 0, max: 10 }),
     validator.body("i").isInt({ min: 0, max: 10 }),
     validator.body("d").isInt({ min: 0, max: 10 }),
+    validator.body("lang").isString().isLength({ min: 2, max: 2 }),
   ],
   async (req, res) => {
     const errors = validator.validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400);
     }
-    const { q, o, i, d } = req.body;
+    const { q, o, i, d, lang } = req.body;
     const o_word = cards.octahedron[o][Math.floor(Math.random() * cards.octahedron[o].length)];
     const i_word = cards.icosahedron[i][Math.floor(Math.random() * cards.icosahedron[i].length)];
     const d_word = cards.dodecahedron[d][Math.floor(Math.random() * cards.dodecahedron[d].length)];
-    const prompt = generate_prompt(q, o_word, i_word, d_word);
+    const prompt = generate_prompt(q, o_word, i_word, d_word, lang);
     try {
       chat_completion = await openai.chat.completions.create({
         messages: [{ role: "user", content: prompt }],

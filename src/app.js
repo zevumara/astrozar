@@ -174,11 +174,11 @@ class Application {
 
   _effects() {
     const animatedBackgroundElement = document.querySelector(".animated-background");
-    if (window.innerWidth > 800) {
+    if (this.isMobile()) {
+      animatedBackgroundElement.remove();
+    } else {
       animatedBackgroundElement.classList.remove("hide");
       if (this.debug) console.log("Effects are activated.");
-    } else {
-      animatedBackgroundElement.remove();
     }
   }
 
@@ -193,6 +193,10 @@ class Application {
 
   screen() {
     return this.screens.currentScreen;
+  }
+
+  isMobile() {
+    return window.innerWidth < 800;
   }
 }
 
@@ -589,7 +593,9 @@ class QueryScreen extends Screen {
   }
 
   ready() {
-    this.queryEl.focus();
+    if (!this._.isMobile()) {
+      this.queryEl.focus();
+    }
   }
 
   async changeScreen() {
@@ -1058,6 +1064,7 @@ class RespondingScreen extends Screen {
           o: this._.session.spread.octahedron,
           i: this._.session.spread.icosahedron,
           d: this._.session.spread.dodecahedron,
+          lang: this._.translation.language,
         }),
       });
       if (!response.ok) {
