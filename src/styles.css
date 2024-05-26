@@ -453,6 +453,12 @@ h1 {
 #slotsScreen .card.back.dodecahedron .inner::before {
   background-image: url(../img/dodecahedron.webp);
 }
+#slotsScreen .slot.icosahedron .animation.rotating {
+  animation-delay: 0.5s;
+}
+#slotsScreen .slot.dodecahedron .animation.rotating {
+  animation-delay: 1s;
+}
 #slotsScreen .card.back .inner {
   width: 80%;
   height: 86%;
