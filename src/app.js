@@ -1,52 +1,3 @@
-window.onload = function () {
-  window.astrozar = new Application({
-    debug: false,
-    preload: [
-      "the-answer.ogg",
-      "alea-iacta-est.ogg",
-      "reveal.ogg",
-      "open.ogg",
-      "close.ogg",
-      "chosen.ogg",
-      "holding.ogg",
-      "shuffling.ogg",
-      "slot-hover.ogg",
-      "button.ogg",
-      "input.ogg",
-      "key.ogg",
-      "ambience.mp3",
-      "background.webp",
-      "astrozar.webp",
-      "bg-card.webp",
-      "holo.webp",
-      "sparkles.webp",
-      "icosahedron.webp",
-      "octahedron.webp",
-      "dodecahedron.webp",
-      "stars-landscape.webp",
-      "stars-portrait.webp",
-    ],
-    customScreens: {
-      welcomeScreen: WelcomeScreen,
-      queryScreen: QueryScreen,
-      shufflingScreen: ShufflingScreen,
-      slotsScreen: SlotsScreen,
-      respondingScreen: RespondingScreen,
-      answerScreen: AnswerScreen,
-    },
-    onload: async () => {
-      const screenEffectsEl = document.querySelector(".screen-effects");
-      const loaderEl = screenEffectsEl.querySelector(".loader");
-      loaderEl.classList.add("animation", "fade-out");
-      setTimeout(() => {
-        screenEffectsEl.classList.add("hide");
-        loaderEl.classList.remove("animation", "fade-out");
-        loaderEl.classList.add("hide");
-      }, 500);
-    },
-  });
-};
-
 class Application {
   constructor(args = []) {
     const { debug, preload, onload, customScreens } = args;
@@ -737,23 +688,23 @@ class SlotsScreen extends Screen {
     let slotEl = this.el.querySelector(".slot.octahedron");
     slotEl.classList.remove("lock", "subtle-levitation");
     slotEl.innerHTML = `
-    <div class="type animation rotating"></div>
-    <div class="order">1.</div>
-    <div class="_openModal"></div>`;
+  <div class="type animation rotating"></div>
+  <div class="order">1.</div>
+  <div class="_openModal"></div>`;
 
     slotEl = this.el.querySelector(".slot.icosahedron");
     slotEl.classList.remove("lock", "subtle-levitation");
     slotEl.innerHTML = `
-    <div class="type animation rotating"></div>
-    <div class="order">2.</div>
-    <div class="_openModal"></div>`;
+  <div class="type animation rotating"></div>
+  <div class="order">2.</div>
+  <div class="_openModal"></div>`;
 
     slotEl = this.el.querySelector(".slot.dodecahedron");
     slotEl.classList.remove("lock", "subtle-levitation");
     slotEl.innerHTML = `
-    <div class="type animation rotating"></div>
-    <div class="order">3.</div>
-    <div class="_openModal"></div>`;
+  <div class="type animation rotating"></div>
+  <div class="order">3.</div>
+  <div class="_openModal"></div>`;
   }
 
   ready() {
@@ -824,10 +775,10 @@ class SlotsScreen extends Screen {
   }
 
   /*
-  -------------
-   Modal: Deck
-  -------------
-  */
+-------------
+ Modal: Deck
+-------------
+*/
 
   showModal() {
     this.renderDeck();
@@ -916,16 +867,16 @@ class SlotsScreen extends Screen {
 
   createCard(number, deck) {
     const cardContent = `
-      <div class="card front ${deck}" style="background-image: url(/img/${deck}-${number}.webp)">
-        <div class="inner">
-          <div class="number">
-            <p>${number}</p>
-            <div class="animation rotating"></div>
-          </div>
-          <div class="name">${this._.translation.cards[deck][number]}</div>
+    <div class="card front ${deck}" style="background-image: url(/img/${deck}-${number}.webp)">
+      <div class="inner">
+        <div class="number">
+          <p>${number}</p>
+          <div class="animation rotating"></div>
         </div>
+        <div class="name">${this._.translation.cards[deck][number]}</div>
       </div>
-    `;
+    </div>
+  `;
     return cardContent;
   }
 
@@ -1170,6 +1121,57 @@ class AnswerScreen extends Screen {
   }
 }
 
-window.onresize = function () {
-  window.astrozar.screens.updateViewport();
-};
+document.addEventListener("DOMContentLoaded", function () {
+  window.astrozar = new Application({
+    debug: false,
+    preload: [
+      "the-answer.ogg",
+      "alea-iacta-est.ogg",
+      "reveal.ogg",
+      "open.ogg",
+      "close.ogg",
+      "chosen.ogg",
+      "holding.ogg",
+      "shuffling.ogg",
+      "slot-hover.ogg",
+      "button.ogg",
+      "input.ogg",
+      "key.ogg",
+      "ambience.mp3",
+      "background.webp",
+      "astrozar.webp",
+      "bg-card.webp",
+      "holo.webp",
+      "sparkles.webp",
+      "icosahedron.webp",
+      "octahedron.webp",
+      "dodecahedron.webp",
+      "stars-landscape.webp",
+      "stars-portrait.webp",
+    ],
+    customScreens: {
+      welcomeScreen: WelcomeScreen,
+      queryScreen: QueryScreen,
+      shufflingScreen: ShufflingScreen,
+      slotsScreen: SlotsScreen,
+      respondingScreen: RespondingScreen,
+      answerScreen: AnswerScreen,
+    },
+    onload: async () => {
+      const screenEffectsEl = document.querySelector(".screen-effects");
+      const loaderEl = screenEffectsEl.querySelector(".loader");
+      loaderEl.classList.add("animation", "fade-out");
+      setTimeout(() => {
+        screenEffectsEl.classList.add("hide");
+        loaderEl.classList.remove("animation", "fade-out");
+        loaderEl.classList.add("hide");
+      }, 500);
+    },
+  });
+});
+
+window.addEventListener("load", function () {
+  window.onresize = function () {
+    window.astrozar.screens.updateViewport();
+  };
+});
